@@ -16,6 +16,12 @@ let square;
 let groundObject;
 let ceilingObject;
 
+// const gameTile = (i, size = 16) => tile(i, size);
+
+// spriteAtlas = {
+//   circle: tile(3, 128),
+// };
+
 class Square extends LJS.EngineObject {
   constructor(pos, time) {
     super(vec2(15, 0), vec2(0.5));
@@ -35,7 +41,7 @@ class Square extends LJS.EngineObject {
       this.velcotiy = vec2();
       this.timer.set(this.time);
     } else if (o == square) {
-      this.velocity = vec2(-0.1, 0.1);
+      this.velocity = vec2(-0.1, 0.2);
     }
 
     return true;
@@ -111,6 +117,40 @@ function gameUpdatePost() {
 function gameRender() {
   // called before objects are rendered
   // draw any background effects that appear behind objects
+  // LJS.drawRect(vec2(0, 0), vec2(100), LJS.GRAY); // draw background
+
+  {
+    // animate using multiple frames
+    // const pos = vec2(-5, 2 * LJS.abs(Math.sin(LJS.time * 2 * LJS.PI)));
+    const pos = vec2(3, 0.1);
+
+    // these values are for walking:
+    // const frame = (LJS.time * 4) % 8 | 0;
+    // let tilePos = vec2(64, 576); // position of tile in pixels
+    // let tileSize = vec2(64, 64); // size of tile in pixels
+
+    // these values are for attacking:
+    const frame = (LJS.time * 4) % 6 | 0;
+    let tilePos = vec2(0, 3600); // position of tile in pixels
+    let tileSize = vec2(128, 128); // size of tile in pixels
+
+    LJS.drawTile(
+      pos,
+      vec2(4),
+      new LJS.TileInfo(tilePos, tileSize).frame(frame)
+    );
+  }
+
+  // Modified form of the whole sprite sheet:
+
+  // let pos = vec2(0, 0); // world position to draw
+  // let size = vec2(15); // world size of the tile
+  // let color = hsl(0, 0, 1); // color to multiply the tile by
+  // let tilePos = vec2(0, 576); // top left corner of tile in pixels
+  // let tileSize = vec2(64, 64); // size of tile in pixels
+  // let tileInfo = new LJS.TileInfo(tilePos, tileSize); // tile info
+
+  // LJS.drawTile(pos, size, tileInfo, color);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -128,5 +168,5 @@ LJS.engineInit(
   gameUpdatePost,
   gameRender,
   gameRenderPost,
-  ["tiles.png"]
+  ["download (1).png"]
 );
