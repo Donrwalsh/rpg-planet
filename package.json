@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "box2d": "^1.0.0",
+    "littlejsengine": "^1.12.6"
+  }
+}
