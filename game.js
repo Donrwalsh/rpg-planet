@@ -12,6 +12,7 @@ const { vec2, hsl, tile, rgb, Timer, GRAY, Box2dObject, box2d } = LJS;
 
 // globals
 let wall;
+let ceiling;
 let square;
 let groundObject;
 let ceilingObject;
@@ -21,6 +22,8 @@ let ceilingObject;
 // spriteAtlas = {
 //   circle: tile(3, 128),
 // };
+
+class Npc extends LJS.EngineObject {}
 
 class Square extends LJS.EngineObject {
   constructor(pos, time) {
@@ -32,16 +35,20 @@ class Square extends LJS.EngineObject {
 
     this.time = time;
     this.timer = new Timer();
+    this.attacking = false;
 
     this.setCollision();
   }
 
   collideWithObject(o) {
     if (o == wall) {
-      this.velcotiy = vec2();
+      this.velocity = vec2();
       this.timer.set(this.time);
-    } else if (o == square) {
-      this.velocity = vec2(-0.1, 0.2);
+      this.attacking = true;
+    } else {
+      if (this.spawnTime < o.spawnTime) {
+        this.velocity = vec2(0.1, LJS.randSign() * 0.2);
+      }
     }
 
     return true;
@@ -49,6 +56,29 @@ class Square extends LJS.EngineObject {
 
   render() {
     LJS.drawRect(this.pos, this.size, this.color);
+
+    if (!this.attacking) {
+      const pos = vec2(3, 0.1);
+      const frame = (LJS.time * 4) % 8 | 0;
+      let tilePos = vec2(64, 576); // position of tile in pixels
+      let tileSize = vec2(64, 64); // size of tile in pixels
+
+      LJS.drawTile(
+        this.pos,
+        vec2(2),
+        new LJS.TileInfo(tilePos, tileSize).frame(frame)
+      );
+    } else {
+      const frame = (LJS.time * 4) % 6 | 0;
+      let tilePos = vec2(0, 3600); // position of tile in pixels
+      let tileSize = vec2(128, 128); // size of tile in pixels
+      LJS.drawTile(
+        this.pos.add(vec2(0, -0.5)),
+        vec2(4),
+        new LJS.TileInfo(tilePos, tileSize).frame(frame)
+      );
+    }
+
     // if (this.timer.isSet()) {
     //   LJS.drawTextOverlay(
     //     this.timer.getPercent().toFixed(2),
@@ -62,6 +92,16 @@ class Square extends LJS.EngineObject {
 class Wall extends LJS.EngineObject {
   constructor(pos) {
     super(pos, vec2(0.5, 1.5));
+
+    this.setCollision();
+    this.mass = 0;
+  }
+}
+
+class Ceiling extends LJS.EngineObject {
+  constructor(pos) {
+    super(pos.add(vec2(1)), vec2(100, 0.5));
+    this.color = LJS.GRAY;
 
     this.setCollision();
     this.mass = 0;
@@ -82,18 +122,21 @@ async function gameInit() {
     LJS.box2d.bodyTypeStatic
   );
   groundObject.addBox(vec2(100, 0.5), vec2(7));
+  groundObject.collideSolidObjects = true;
 
-  ceilingObject = new LJS.Box2dObject(
-    vec2(-8),
-    vec2(),
-    0,
-    0,
-    LJS.GRAY,
-    LJS.box2d.bodyTypeStatic
-  );
-  ceilingObject.addBox(vec2(100, 0.5), vec2(9));
+  // ceilingObject = new LJS.Box2dObject(
+  //   vec2(-8),
+  //   vec2(),
+  //   0,
+  //   0,
+  //   LJS.GRAY,
+  //   LJS.box2d.bodyTypeStatic
+  // );
+  // ceilingObject.addBox(vec2(100, 0.5), vec2(9));
+  // ceilingObject.collideSolidObjects = true;
 
   wall = new Wall(LJS.cameraPos);
+  ceiling = new Ceiling(LJS.cameraPos);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -130,15 +173,15 @@ function gameRender() {
     // let tileSize = vec2(64, 64); // size of tile in pixels
 
     // these values are for attacking:
-    const frame = (LJS.time * 4) % 6 | 0;
-    let tilePos = vec2(0, 3600); // position of tile in pixels
-    let tileSize = vec2(128, 128); // size of tile in pixels
+    // const frame = (LJS.time * 4) % 6 | 0;
+    // let tilePos = vec2(0, 3600); // position of tile in pixels
+    // let tileSize = vec2(128, 128); // size of tile in pixels
 
-    LJS.drawTile(
-      pos,
-      vec2(4),
-      new LJS.TileInfo(tilePos, tileSize).frame(frame)
-    );
+    // LJS.drawTile(
+    //   pos,
+    //   vec2(4),
+    //   new LJS.TileInfo(tilePos, tileSize).frame(frame)
+    // );
   }
 
   // Modified form of the whole sprite sheet:

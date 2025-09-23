@@ -11,10 +11,15 @@ Otherwise, I have plans for rpg elements to happen in this hallway: boxes attack
 
 Went looking for some free assets and found something called LPC which has the art style that I'm looking for and seems to be somewhat standardized. I produced a standard sprite sheet for the male character and downloaded it into my project. I'm still calling it `download.png` rather than updating `tiles.png` for now. Got it from https://liberatedpixelcup.github.io/Universal-LPC-Spritesheet-Character-Generator which seems really awesome, even though the LPC itself doesn't exist anymore.
 
-I got my example app reading from the tile sheet properly (though it seems like it'll be tricky to eventually have a bunch of these, but I'll figure that out later). Furthermore the page where I generated this thing has some helpful previews that work to isolate which sprites I'm actually after. I used the Animation example to get the generic male character to walk left and it looks great! This is a good spot for a checkpoint commit.
+I got my example app reading from the tile sheet properly (though it seems like it'll be tricky to eventually have a bunch of these, but I'll figure that out later). Furthermore the page wghere I generated this thing has some helpful previews that work to isolate which sprites I'm actually after. I used the Animation example to get the generic male character to walk left and it looks great! This is a good spot for a checkpoint commit.
 
 But before I do that, I played around some more with the spritesheet generator. I'm not sure how I'm supposed to make use of this? If I, say, wanted a varied collection of sprites to generate I guess I need a full sprite sheet for each? There seems to be something where I can export just the items and just the characters so maybe I can fuss with that later. In addition, the only 'action' attacks that are properly animated in the way that I'd expect are spaced differently and are much larger than the other sprites. Interesting.
 
 I can export just the walk and slash animations (and I guess the death animation, but that only faces the camera for some reason) and so maybe this is the method I'd use to reduce the amount of space eaten up by assets. At least, that's what makes the most sense for now.
 
-- [ ] Take what I learned about sprites and apply them to the blue boxes. Walking animation while strolling and then attack animation once it reaches the wall.
+- [ ] Take what I learned about sprites and apply them to the blue boxes. Walking animation while strolling and then attack animation once it reaches the wall. Just do one npc to start with.
+- [ ] Look back into the sprite atlas now that I know how this works kinda
+
+So here's what I'm thinking: You've got the sprites themselves which are one representation of the npc, but then also the shapes that can serve as their collision portion and be positioned as a sort of central 'shadow' point underneath the feet. This should create a cool grouping effect and I can also use different shapes to represent different classes of npcs!
+
+It is functional for a single npc, but gets weird when there are multiple. Granted, the offsetting bit is working with the ceiling having collision, but the floor doesn't and when I tried to add a random selection between up or down it didn't work quite right. Also there appears to be some bouncing happening off the wall and other npcs. Pretty pleased with how this is looking. The blue square could be more at the feet, but it's also pretty cool centered as is currently.
