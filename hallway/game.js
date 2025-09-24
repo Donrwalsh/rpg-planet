@@ -1,50 +1,48 @@
 /*
-    Little JS Hello World Demo
-    - Just prints "Hello World!"
-    - A good starting point for new projects
+    Basic Hallway Concept Playground
 */
 
 ("use strict");
 
 // import LittleJS module
 import * as LJS from "../../dist/littlejs.esm.js";
-const { vec2, hsl, tile, rgb, Timer, GRAY, Box2dObject, box2d } = LJS;
+const { EngineObject, vec2, rgb, Timer } = LJS;
 
 // globals
+let npc; // working with a single npc for now
+let debug = true;
+
+// globals-old
 let wall;
 let ceiling;
-let square;
 let groundObject;
 let ceilingObject;
 
-// const gameTile = (i, size = 16) => tile(i, size);
-
-// spriteAtlas = {
-//   circle: tile(3, 128),
-// };
-
-class Npc extends LJS.EngineObject {}
-
-class Square extends LJS.EngineObject {
-  constructor(pos, time) {
-    super(vec2(15, 0), vec2(0.5));
+class Npc extends EngineObject {
+  constructor() {
+    super(vec2(20, 0), vec2(0.5)); // first is position of spawn, 2nd is size of blue square
     this.color = rgb(0.071, 0.145, 0.8);
+    this.attackSpeed = 1;
+    this.attackDamage = 1;
 
-    this.velocity = vec2(-0.1, 0); // give square some movement
-    this.velocity.normalize(0.01);
-
-    this.time = time;
     this.timer = new Timer();
+
     this.attacking = false;
+    this.target;
 
     this.setCollision();
   }
 
+  startAttacking(o) {
+    this.velocity = vec2(); // stop moving
+    this.timer.set(this.attackSpeed);
+    this.attacking = true;
+    this.target = o;
+  }
+
   collideWithObject(o) {
     if (o == wall) {
-      this.velocity = vec2();
-      this.timer.set(this.time);
-      this.attacking = true;
+      this.startAttacking(o);
     } else {
       if (this.spawnTime < o.spawnTime) {
         this.velocity = vec2(0.1, LJS.randSign() * 0.2);
@@ -55,7 +53,23 @@ class Square extends LJS.EngineObject {
   }
 
   render() {
-    LJS.drawRect(this.pos, this.size, this.color);
+    if (this.timer.elapsed() && this.attacking) {
+      // TODO: include some sort of range check
+      this.target.hp -= this.attackDamage;
+      if (this.target.destroyed || this.target.hp == 0 || this.target.hp < 0) {
+        this.attacking = false;
+      } else {
+        this.timer.set(this.attackSpeed);
+      }
+    }
+    if (debug) {
+      LJS.drawRect(this.pos, this.size, this.color);
+    }
+
+    if (!this.attacking) {
+      this.velocity = vec2(-0.1, 0); // standard movement expressed here
+      this.velocity.normalize(0.01); // seemingly has no effect?
+    }
 
     if (!this.attacking) {
       const pos = vec2(3, 0.1);
@@ -78,14 +92,6 @@ class Square extends LJS.EngineObject {
         new LJS.TileInfo(tilePos, tileSize).frame(frame)
       );
     }
-
-    // if (this.timer.isSet()) {
-    //   LJS.drawTextOverlay(
-    //     this.timer.getPercent().toFixed(2),
-    //     this.pos.add(vec2(0, 1)),
-    //     2
-    //   );
-    // }
   }
 }
 
@@ -93,8 +99,17 @@ class Wall extends LJS.EngineObject {
   constructor(pos) {
     super(pos, vec2(0.5, 1.5));
 
+    this.maxHp = 5;
+    this.hp = 5;
+
     this.setCollision();
     this.mass = 0;
+  }
+
+  update() {
+    if (this.hp == 0 || this.hp < 0) {
+      this.destroy();
+    }
   }
 }
 
@@ -124,29 +139,17 @@ async function gameInit() {
   groundObject.addBox(vec2(100, 0.5), vec2(7));
   groundObject.collideSolidObjects = true;
 
-  // ceilingObject = new LJS.Box2dObject(
-  //   vec2(-8),
-  //   vec2(),
-  //   0,
-  //   0,
-  //   LJS.GRAY,
-  //   LJS.box2d.bodyTypeStatic
-  // );
-  // ceilingObject.addBox(vec2(100, 0.5), vec2(9));
-  // ceilingObject.collideSolidObjects = true;
-
   wall = new Wall(LJS.cameraPos);
   ceiling = new Ceiling(LJS.cameraPos);
+  npc = new Npc(); // create an NPC
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
-
   if (LJS.mouseWasPressed(0)) {
-    // spawn new ball if there is no ball and left mouse pressed
-    square = new Square(LJS.cameraPos, 1); // create a square
+    wall.destroy();
   }
 }
 
