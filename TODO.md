@@ -9,3 +9,6 @@
 
 - [ ] Could use an example of how to spread code across multiple js files.
 - [ ] Add a range check to the basic npc attack.
+- [ ] Would be cool to show some damage numbers on screen.
+- [x] How about changing around the way sprites are chosen so that they don't all sync up?
+- [ ] How about adding multiple walls?

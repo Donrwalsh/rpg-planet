@@ -11,21 +11,21 @@ const { EngineObject, vec2, rgb, Timer } = LJS;
 // globals
 let npc; // working with a single npc for now
 let debug = true;
-
-// globals-old
 let wall;
 let ceiling;
-let groundObject;
-let ceilingObject;
+let floor;
 
 class Npc extends EngineObject {
   constructor() {
-    super(vec2(20, 0), vec2(0.5)); // first is position of spawn, 2nd is size of blue square
+    super(vec2(15, LJS.rand(-0.75, 0.75)), vec2(0.2)); // first is position of spawn, 2nd is size of blue square
     this.color = rgb(0.071, 0.145, 0.8);
     this.attackSpeed = 1;
     this.attackDamage = 1;
 
     this.timer = new Timer();
+
+    this.adjustingTimer = new Timer();
+    this.adjustTime = 3;
 
     this.attacking = false;
     this.target;
@@ -41,14 +41,21 @@ class Npc extends EngineObject {
   }
 
   collideWithObject(o) {
-    if (o == wall) {
-      this.startAttacking(o);
-    } else {
-      if (this.spawnTime < o.spawnTime) {
-        this.velocity = vec2(0.1, LJS.randSign() * 0.2);
+    if (!this.attacking) {
+      if (o == wall) {
+        this.startAttacking(o);
+        this.gravityScale = 0;
+      } else if (o == floor || o == ceiling) {
+        this.gravityScale = this.gravityScale * -1;
+      } else if (
+        // implied that o is an npc
+        !this.adjustingTimer.isSet() ||
+        !this.adjustingTimer.active()
+      ) {
+        this.gravityScale = this.gravityScale * LJS.randSign();
+        this.adjustingTimer.set(this.adjustTime);
       }
     }
-
     return true;
   }
 
@@ -59,6 +66,7 @@ class Npc extends EngineObject {
       if (this.target.destroyed || this.target.hp == 0 || this.target.hp < 0) {
         this.attacking = false;
       } else {
+        // this.destroy(); //simulate spike walls:
         this.timer.set(this.attackSpeed);
       }
     }
@@ -73,21 +81,21 @@ class Npc extends EngineObject {
 
     if (!this.attacking) {
       const pos = vec2(3, 0.1);
-      const frame = (LJS.time * 4) % 8 | 0;
+      const frame = (this.getAliveTime() * 4) % 8 | 0;
       let tilePos = vec2(64, 576); // position of tile in pixels
       let tileSize = vec2(64, 64); // size of tile in pixels
 
       LJS.drawTile(
-        this.pos,
+        this.pos.add(vec2(0, 0.7)),
         vec2(2),
         new LJS.TileInfo(tilePos, tileSize).frame(frame)
       );
     } else {
-      const frame = (LJS.time * 4) % 6 | 0;
+      const frame = (this.getAliveTime() * 4) % 6 | 0;
       let tilePos = vec2(0, 3600); // position of tile in pixels
       let tileSize = vec2(128, 128); // size of tile in pixels
       LJS.drawTile(
-        this.pos.add(vec2(0, -0.5)),
+        this.pos.add(vec2(0, 0.2)),
         vec2(4),
         new LJS.TileInfo(tilePos, tileSize).frame(frame)
       );
@@ -97,10 +105,10 @@ class Npc extends EngineObject {
 
 class Wall extends LJS.EngineObject {
   constructor(pos) {
-    super(pos, vec2(0.5, 1.5));
+    super(pos, vec2(0.5, 4));
 
-    this.maxHp = 5;
-    this.hp = 5;
+    this.maxHp = 50;
+    this.hp = 50;
 
     this.setCollision();
     this.mass = 0;
@@ -123,24 +131,26 @@ class Ceiling extends LJS.EngineObject {
   }
 }
 
+class Floor extends LJS.EngineObject {
+  constructor(pos) {
+    super(pos.add(vec2(-1)), vec2(100, 0.5));
+    this.color = LJS.GRAY;
+
+    this.setCollision();
+    this.mass = 0;
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 async function gameInit() {
   await LJS.box2dInit();
+
   // called once after the engine starts up
   // setup the game
-  groundObject = new LJS.Box2dObject(
-    vec2(-8),
-    vec2(),
-    0,
-    0,
-    LJS.GRAY,
-    LJS.box2d.bodyTypeStatic
-  );
-  groundObject.addBox(vec2(100, 0.5), vec2(7));
-  groundObject.collideSolidObjects = true;
-
+  LJS.setGravity(vec2(0, -0.01));
   wall = new Wall(LJS.cameraPos);
   ceiling = new Ceiling(LJS.cameraPos);
+  floor = new Floor(LJS.cameraPos);
   npc = new Npc(); // create an NPC
 }
 
@@ -149,7 +159,7 @@ function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
   if (LJS.mouseWasPressed(0)) {
-    wall.destroy();
+    new Npc();
   }
 }
 
@@ -163,40 +173,6 @@ function gameUpdatePost() {
 function gameRender() {
   // called before objects are rendered
   // draw any background effects that appear behind objects
-  // LJS.drawRect(vec2(0, 0), vec2(100), LJS.GRAY); // draw background
-
-  {
-    // animate using multiple frames
-    // const pos = vec2(-5, 2 * LJS.abs(Math.sin(LJS.time * 2 * LJS.PI)));
-    const pos = vec2(3, 0.1);
-
-    // these values are for walking:
-    // const frame = (LJS.time * 4) % 8 | 0;
-    // let tilePos = vec2(64, 576); // position of tile in pixels
-    // let tileSize = vec2(64, 64); // size of tile in pixels
-
-    // these values are for attacking:
-    // const frame = (LJS.time * 4) % 6 | 0;
-    // let tilePos = vec2(0, 3600); // position of tile in pixels
-    // let tileSize = vec2(128, 128); // size of tile in pixels
-
-    // LJS.drawTile(
-    //   pos,
-    //   vec2(4),
-    //   new LJS.TileInfo(tilePos, tileSize).frame(frame)
-    // );
-  }
-
-  // Modified form of the whole sprite sheet:
-
-  // let pos = vec2(0, 0); // world position to draw
-  // let size = vec2(15); // world size of the tile
-  // let color = hsl(0, 0, 1); // color to multiply the tile by
-  // let tilePos = vec2(0, 576); // top left corner of tile in pixels
-  // let tileSize = vec2(64, 64); // size of tile in pixels
-  // let tileInfo = new LJS.TileInfo(tilePos, tileSize); // tile info
-
-  // LJS.drawTile(pos, size, tileInfo, color);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
