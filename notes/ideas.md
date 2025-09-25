@@ -1,0 +1,3 @@
+- The lineage system could be bound to a single game. When an NPC dies, they (or their offspring) return with modified stats based on how they originally died. Hm.
+- Range system for NPCs. What I have now uses collision as a stand-in for melee-distance threat of an attackable object. Should probably work to decouple those.
+- This threat concept could be clever. Have NPCs hold and carry multiple types of weapons. They choose which weapon to use based on availability of potential targets.
