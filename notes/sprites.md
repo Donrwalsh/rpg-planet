@@ -147,3 +147,9 @@ Working on cropping the smaller files (obtained by doing split by animation only
 Was thinking I might be in a bind here for multiple warriors since I haven't quite figured out how to handle multiple melee mobs. But then. . . jumping! I have some ideas how this might work and I think that's a great way to solve this particular issue for now.
 
 Ok, so I'm going to bring over the same movement animation that I used previously so I'm going to go ahead and checkpoint here.
+
+Cool. So I've got some stuff brewing here, but I'm getting tired of clicking all the time to spawn one dude. Gonna add some auto-spawning next. I'm a fan of the movement as it works right now. Jumping adds an interesting element here. I'm not using all of the jump sprites but I think this is sufficient for now.
+
+I'm interested in adding some variety here. I think it'll be a fun endeavor to throw in representations of the other two starter npc classes so I can play with variation on their behavior.
+
+Fussed with using two different source files and got it working. That's absolutely huge! Time to move on to making distinct NPCs with different behavior sets.

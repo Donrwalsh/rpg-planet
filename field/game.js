@@ -1,19 +1,36 @@
+/*
+    Basic Field Concept Playground
+*/
+
 "use strict";
 
 // import LittleJS module
 import * as LJS from "../dist/littlejs.esm.js";
 import * as NPC from "./npc.js";
-const { vec2, TileCollisionLayer, TileLayerData, GREEN, setCameraPos, RED } =
-  LJS;
+const {
+  vec2,
+  TileCollisionLayer,
+  TileLayerData,
+  GREEN,
+  setCameraPos,
+  TileInfo,
+} = LJS;
 const { Npc } = NPC;
+
+export let spriteAtlas;
+let repeatSpawnTimer = new LJS.Timer();
 
 ///////////////////////////////////////////////////////////////////////////////
 
 function gameInit() {
-  LJS.gravity.y = -0.1;
+  LJS.gravity.y = -0.01;
   // Establish a stack of 3 green blocks with collision as the field
   const pos = vec2();
-  const tileLayer = new TileCollisionLayer(pos, vec2(256));
+  const tileLayer = new TileCollisionLayer(
+    pos,
+    vec2(256),
+    new TileInfo(pos, vec2(16), 1)
+  );
 
   setCameraPos(vec2(20, 0));
 
@@ -24,6 +41,7 @@ function gameInit() {
 
       // set tile data
       tileLayer.setData(pos, new TileLayerData(1, 1, true, GREEN));
+
       tileLayer.setCollisionData(pos);
     }
   tileLayer.redraw(); // redraw tile layer with new data
@@ -35,6 +53,14 @@ function gameUpdate() {
   // handle input and update the game state
   if (LJS.mouseWasPressed(0)) {
     new Npc(LJS.mousePos);
+  }
+  if (LJS.mouseIsDown(1) || LJS.mouseIsDown("KeyZ")) {
+    const isSet = repeatSpawnTimer.isSet();
+    if (!isSet || repeatSpawnTimer.elapsed()) {
+      // spawn continuously after a delay
+      isSet || repeatSpawnTimer.set(0.5);
+      new Npc(LJS.mousePos);
+    }
   }
 }
 
@@ -64,5 +90,5 @@ LJS.engineInit(
   gameUpdatePost,
   gameRender,
   gameRenderPost,
-  ["tiles.png"]
+  ["sprite_sheet.png", "tiles.png"]
 );
