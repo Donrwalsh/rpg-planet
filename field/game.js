@@ -1,26 +1,24 @@
-/*
-    Little JS Hello World Demo
-    - Just prints "Hello World!"
-    - A good starting point for new projects
-*/
-
 "use strict";
 
 // import LittleJS module
 import * as LJS from "../dist/littlejs.esm.js";
-const { vec2, TileCollisionLayer, TileLayerData, GREEN } = LJS;
+import * as NPC from "./npc.js";
+const { vec2, TileCollisionLayer, TileLayerData, GREEN, setCameraPos, RED } =
+  LJS;
+const { Npc } = NPC;
 
 ///////////////////////////////////////////////////////////////////////////////
 
 function gameInit() {
+  LJS.gravity.y = -0.1;
   // Establish a stack of 3 green blocks with collision as the field
-  // create tile layer
   const pos = vec2();
-  const tileLayer = new TileCollisionLayer(pos.add(vec2(-20, 0)), vec2(256));
+  const tileLayer = new TileCollisionLayer(pos, vec2(256));
+
+  setCameraPos(vec2(20, 0));
+
   for (pos.x = tileLayer.size.x; pos.x--; )
     for (pos.y = tileLayer.size.y; pos.y--; ) {
-      // check if tile should be solid
-      // const levelHeight = pos.x < 9 ? 2 : ((pos.x / 4) | 0) ** 3.1 % 7;
       const levelHeight = 2;
       if (pos.y > levelHeight) continue;
 
@@ -35,6 +33,9 @@ function gameInit() {
 function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
+  if (LJS.mouseWasPressed(0)) {
+    new Npc(LJS.mousePos);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

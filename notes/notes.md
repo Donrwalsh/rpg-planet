@@ -42,6 +42,19 @@ Then I did a slight adjustment to the way I calculate sprite time so that they a
 
 ### 9/26/25
 
+**Current Tasks**:
+
+- [ ] Learn more about the physics engine
+  - [ ] An apparent next task would be to create **Field** where the NPC is an `EngineObject` but the floor is part of the level. The single NPC's behavior is based on the environment around it. Feet need to be on the ground to move forward and movement stops when there is something attackable within melee (touch range to start, think super basic starter NPC). Consider adding the scroll element to end the game.
+
 Spent some time yesterday learning about physics. Now I'm going to work on the **Field** concept.
 
 One thing that's been on my mind as I work on this is the game's camera. I'm working with a static camera for now, but the vision that I'm working off of has a side-scrolling camera that is under control by the player so they can work with a much larger level and move from one side to the other. Gestures to move the camera? Not sure how it'd work on desktop...
+
+The plan is to establish a basic NPC class with this task. So not going to be considering bells and whistles RE: stats. Just going to focus on movement and core behavior right now.
+
+`LJS.mousePos` is not globally available as you might think. `npc.js` reports it as `vec2(0, 0)` unless it's passed in from `game.js`. Curious. Anyway, now that the mouse position is being read correctly, I have it so that wherever you click on the screen a blue box appears. Dope. Now let's get gravity to act on them.
+
+Ok, so getting gravity to act on the blue squares is no issue. Getting the tileset to behave appropriately with gravity is causing me trouble. The minimal way that the tileset is generated seems to be causing troubles with me wanting my x-index to start at -20. Oh well, I'm going to just stick with the 0,0 origin for now so I don't waste any more time with this when I don't even have a solid concept of how I want screen positioning to behave.
+
+Blue boxes appear wherever I click and accelerate up to max speed and then proceed as such until they inevitably fall off the left edge. Nice.
