@@ -153,3 +153,7 @@ Cool. So I've got some stuff brewing here, but I'm getting tired of clicking all
 I'm interested in adding some variety here. I think it'll be a fun endeavor to throw in representations of the other two starter npc classes so I can play with variation on their behavior.
 
 Fussed with using two different source files and got it working. That's absolutely huge! Time to move on to making distinct NPCs with different behavior sets.
+
+Ok, I see how this works. I can render the sprite in pieces. Let's go.
+
+Starting to think that this would be more interesting if I took full advantage of the LPC structure.

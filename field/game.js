@@ -90,5 +90,5 @@ LJS.engineInit(
   gameUpdatePost,
   gameRender,
   gameRenderPost,
-  ["sprite_sheet.png", "tiles.png"]
+  ["sprite_sheet.png", "tiles.png", "axe-walk-left.png"]
 );

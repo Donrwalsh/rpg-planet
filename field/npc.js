@@ -109,5 +109,13 @@ export class Npc extends EngineObject {
         (this.getAliveTime() * 3) % 9 | 0
       )
     );
+    //Axe
+    LJS.drawTile(
+      this.pos.add(vec2(0, 0.2)),
+      vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 2).frame(
+        (this.getAliveTime() * 3) % 9 | 0
+      )
+    );
   }
 }
