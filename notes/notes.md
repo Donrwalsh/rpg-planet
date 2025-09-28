@@ -58,3 +58,14 @@ The plan is to establish a basic NPC class with this task. So not going to be co
 Ok, so getting gravity to act on the blue squares is no issue. Getting the tileset to behave appropriately with gravity is causing me trouble. The minimal way that the tileset is generated seems to be causing troubles with me wanting my x-index to start at -20. Oh well, I'm going to just stick with the 0,0 origin for now so I don't waste any more time with this when I don't even have a solid concept of how I want screen positioning to behave.
 
 Blue boxes appear wherever I click and accelerate up to max speed and then proceed as such until they inevitably fall off the left edge. Nice.
+
+### 9/27/25
+
+I've built a chessboard out of grass.
+
+Right now we've got ourselves a JSON file that does the same thing in two ways. It records the size of the board (8x8 in our case) and then holds a data representation of that board which is just all zeroes for now indicating grass. These two values must agree with each other since I'm having trouble deciding which direction to go here, either procedural or explicit. Anyway, The solid 8x8 green blob looked meh, so I added borders to it. I suppose this is just a fizzbuzz situation and it'll be helpful to have everything separated out like this due to the fact that these are also the cells that will need some sort of special behavior for being the barrier of the world.
+
+https://opengameart.org/content/lpc-tile-atlas
+https://opengameart.org/content/lpc-tile-atlas2
+
+Ok, I landed on the explicit approach. I'm treating grass and grassEdge as different. No need to hardcode the different tile selection based on position, that can be handled by the js code somewhere. Looking at things, I don't like having all of this in `game.js` and I think I'll follow the example of establishing a `gameLevel.js`. Probably do that next actually.
