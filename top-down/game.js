@@ -62,5 +62,5 @@ LJS.engineInit(
   gameUpdatePost,
   gameRender,
   gameRenderPost,
-  ["./Atlas/terrain_atlas.png", "./submission_daneeklu"]
+  ["./Atlas/terrain_atlas.png", "./submission_daneeklu/ui/scrollsandblocks.png"]
 );
