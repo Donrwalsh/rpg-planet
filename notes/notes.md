@@ -97,7 +97,7 @@ Things to do:
   - [ ] This seems actually somewhat tricky to get to work exactly with the sprites. Will need to revisit this later to clean it up I think.
 - [x] Make them move around the screen.
 - [x] Let's get a bigger field to work with.
-- [ ] For god's sake, give them some clothes!
+- [x] For god's sake, give them some clothes!
 - [ ] NPC Stat readout on screen.
 
 Proposed Init Sequence:
@@ -117,3 +117,5 @@ Second half of the day:
 Ok check this out. It occurs to me that I have all the necessary bits to build a compelling map. I have the tiles, the ability to place tiles as part of the map and then also the ability to decide where NPCs spawn. There's some other stuff to solve to fill in the complete 'game' blanks, but I like the idea to pivoting to building a more interesting map to populate with NPCs and go from there. So! Onward to interesting map ideas. Probably gonna put together a new notes file for this.
 
 I like a 36x60 map.
+
+Played around with color modulation on pants and shirt. White works best as a base color. I stress-tested it and hit problems with upwards of 500 NPCs. Should be good for a while!

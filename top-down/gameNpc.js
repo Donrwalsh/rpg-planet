@@ -28,7 +28,7 @@ export class NPC extends LJS.EngineObject {
 
   render() {
     // LJS.drawRect(this.pos, this.size, this.color);
-    if (this.velocity.x == 0 && this.velocity.y == 0) {
+    if (this.velocity.x == 0 || this.velocity.y == 0) {
       // Choose a random direction.
       // abs of both vector values should = npc speed.
       const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
@@ -84,12 +84,39 @@ export class NPC extends LJS.EngineObject {
     let tilePos = this.getTilePos("walk", this.getFacing());
     let tileSize = LJS.vec2(64, 64);
 
+    // sprite:
     LJS.drawTile(
       this.pos.add(LJS.vec2(0, 0.65)),
       LJS.vec2(2),
       new LJS.TileInfo(tilePos, tileSize, 2 + this.gender).frame(
         (this.getAliveTime() * 3) % this.getFrames("walk") | 0
       )
+    );
+    shirt: LJS.drawTile(
+      this.pos.add(LJS.vec2(0, 0.65)),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 4 + this.gender).frame(
+        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
+      ),
+      this.color
+    );
+    // pants:
+    LJS.drawTile(
+      this.pos.add(LJS.vec2(0, 0.65)),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 6 + this.gender).frame(
+        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
+      ),
+      LJS.GRAY
+    );
+    // hair:
+    LJS.drawTile(
+      this.pos.add(LJS.vec2(0, 0.65)),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 8).frame(
+        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
+      ),
+      LJS.BLACK
     );
   }
 

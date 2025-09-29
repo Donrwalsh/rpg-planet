@@ -35,9 +35,14 @@ async function gameInit() {
 
   GameLevel.buildLevel();
 
-  npcs.push(new GameNpc.NPC(vec2(2, 2), LJS.RED));
-  npcs.push(new GameNpc.NPC(vec2(7, 2), LJS.YELLOW));
-  npcs.push(new GameNpc.NPC(vec2(3, 7), LJS.BLUE));
+  for (let i = 0; i < 20; i++) {
+    npcs.push(
+      new GameNpc.NPC(
+        vec2(LJS.randInt(5, 20), LJS.randInt(5, 20)),
+        [LJS.RED, LJS.YELLOW, LJS.BLUE][LJS.randInt(3)]
+      )
+    );
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,5 +110,10 @@ LJS.engineInit(
     "./submission_daneeklu/ui/scrollsandblocks.png",
     "./lpc-spritesheets/MaleBody.png",
     "./lpc-spritesheets/FemaleBody.png",
+    "./lpc-spritesheets/MaleWhiteShirt.png",
+    "./lpc-spritesheets/FemaleWhiteShirt.png",
+    "./lpc-spritesheets/MaleWhitePants.png",
+    "./lpc-spritesheets/FemaleWhitePants.png",
+    "./lpc-spritesheets/ShortWhiteHair.png",
   ]
 );
