@@ -1,3 +1,67 @@
+# Modern 3d Ideas
+
+## Properties
+
+### Characteristics
+
+Core characteristics of the NPC. These are established once and never change.
+
+- Gender
+- Faction/Kingdom
+- Class
+
+### Class
+
+Each NPC has one class. Classes are alliteratively tiered:
+
+| Tier 0 | Tier 1   | Tier 2    | Tier 3   | _(Stat Focus)_ |
+| ------ | -------- | --------- | -------- | -------------- |
+| Pleb   | Soldier  | Cavalier  | Warrior  | _Strength_     |
+|        | Scout    | Charlatan | Wanderer | _Speed_        |
+|        | Sorcerer | Cleric    | Wizard   | _Smarts_       |
+
+#### Pleb
+
+Core starter class. Each Tier 1 class builds upon the basics represented by this class. Tier 2 and 3 may not follow this pattern but still represent an advancement from the previous tier.
+
+### Stats
+
+**Core Stats**
+
+- Strength
+- Speed
+- Smarts
+
+Attributes of the NPC which influence gameplay results. These are established in accordance to the NPC's characteristics and are influenced by other sources as well.
+
+**Level**
+
+- Level
+
+Level is like a stat but it is unique in that it can change instantaneously when an NPC levels up, resulting in a cascade effect that may directly modify other stats 'permanently'.
+
+### Equipment
+
+NPCs may carry equipment that enhance their capabilities. Upon defeat, this equipment turns into loot. All NPCs have three main equipment slots, certain NPCs have additional slots which contain rarer equipment/loot.
+
+- _Main_ - Weapon
+- _Main_ - Outfit
+- _Main_ - Other
+- _Specialist_ - Shield
+- _Specialist_ - Pockets
+- _Specialist_ - Enchantment
+- ...
+
+### Behavior
+
+This'll be interesting. . .
+
+### Sprites
+
+- [ ]
+
+# Old 2d Ideas
+
 ## Classes:
 
 At the start, each NPC is one of three classes:

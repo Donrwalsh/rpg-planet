@@ -1,11 +1,18 @@
 import * as LJS from "../dist/littlejs.esm.js";
 
+const atlas = {
+  spellcast: { tilePos: LJS.vec2(0, 0), frames: 7 },
+  walk: { tilePos: LJS.vec2(0, 512), frames: 9 },
+};
+
 export class NPC extends LJS.EngineObject {
   constructor(pos, color) {
     let size = LJS.vec2(0.5);
     super(pos, size);
     this.pos = pos;
     this.color = color;
+
+    this.gender = LJS.randInt(2);
 
     this.name = {
       [LJS.RED]: "red",
@@ -20,7 +27,7 @@ export class NPC extends LJS.EngineObject {
   }
 
   render() {
-    LJS.drawRect(this.pos, this.size, this.color);
+    // LJS.drawRect(this.pos, this.size, this.color);
     if (this.velocity.x == 0 && this.velocity.y == 0) {
       // Choose a random direction.
       // abs of both vector values should = npc speed.
@@ -32,6 +39,8 @@ export class NPC extends LJS.EngineObject {
       this.velocity.y = LJS.randSign() * randY;
       this.velocity.x = LJS.randSign() * randX;
     }
+    // Just assumed to be walking all the time:
+    this.renderWalk();
 
     if (LJS.abs(this.velocity.x) + LJS.abs(this.velocity.x) < this.speed) {
       //   console.log(
@@ -48,7 +57,51 @@ export class NPC extends LJS.EngineObject {
     }
   }
 
+  getFacing() {
+    // Will cause errors if a case is missed.
+    let direction;
+
+    if (this.velocity.y > 0) {
+      if (LJS.abs(this.velocity.y) >= LJS.abs(this.velocity.x)) {
+        direction = 0;
+      } else {
+        direction = this.velocity.x > 0 ? 3 : 1;
+      }
+    }
+
+    if (this.velocity.y <= 0) {
+      if (LJS.abs(this.velocity.y) >= LJS.abs(this.velocity.x)) {
+        direction = 2;
+      } else {
+        direction = this.velocity.x > 0 ? 3 : 1;
+      }
+    }
+
+    return direction;
+  }
+
+  renderWalk() {
+    let tilePos = this.getTilePos("walk", this.getFacing());
+    let tileSize = LJS.vec2(64, 64);
+
+    LJS.drawTile(
+      this.pos.add(LJS.vec2(0, 0.65)),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 2 + this.gender).frame(
+        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
+      )
+    );
+  }
+
   collideWithObject(o) {
-    // console.log(o);
+    console.log(o);
+  }
+
+  getTilePos(action, dir) {
+    return atlas[action].tilePos.add(LJS.vec2(0, 64 * dir));
+  }
+
+  getFrames(action) {
+    return atlas[action].frames;
   }
 }

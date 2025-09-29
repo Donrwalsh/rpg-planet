@@ -13,6 +13,9 @@ const { vec2, hsl, tile } = LJS;
 // globals
 export let gameLevelData;
 
+// npcs
+let npcs = [];
+
 ///////////////////////////////////////////////////////////////////////////////
 async function gameInit() {
   // called once after the engine starts up
@@ -32,9 +35,9 @@ async function gameInit() {
 
   GameLevel.buildLevel();
 
-  new GameNpc.NPC(vec2(2, 2), LJS.RED);
-  new GameNpc.NPC(vec2(7, 2), LJS.YELLOW);
-  new GameNpc.NPC(vec2(3, 7), LJS.BLUE);
+  npcs.push(new GameNpc.NPC(vec2(2, 2), LJS.RED));
+  npcs.push(new GameNpc.NPC(vec2(7, 2), LJS.YELLOW));
+  npcs.push(new GameNpc.NPC(vec2(3, 7), LJS.BLUE));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,6 +61,16 @@ function gameUpdate() {
 
   if (LJS.keyWasPressed("KeyD") || LJS.keyWasPressed("ArrowRight"))
     LJS.setCameraPos(vec2(LJS.cameraPos.x + 1, LJS.cameraPos.y));
+
+  const clickedOnNpc = npcs.find((npc) =>
+    // Based on collision square:
+    // LJS.isOverlapping(npc.pos, npc.size, LJS.mousePos)
+    // Based on sprite (is way too big):
+    LJS.isOverlapping(npc.pos.add(LJS.vec2(0, 0.65)), LJS.vec2(2), LJS.mousePos)
+  );
+  if (clickedOnNpc) {
+    console.log(clickedOnNpc.name);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,5 +100,10 @@ LJS.engineInit(
   gameUpdatePost,
   gameRender,
   gameRenderPost,
-  ["./Atlas/terrain_atlas.png", "./submission_daneeklu/ui/scrollsandblocks.png"]
+  [
+    "./Atlas/terrain_atlas.png",
+    "./submission_daneeklu/ui/scrollsandblocks.png",
+    "./lpc-spritesheets/MaleBody.png",
+    "./lpc-spritesheets/FemaleBody.png",
+  ]
 );

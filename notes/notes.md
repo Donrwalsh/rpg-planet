@@ -89,3 +89,25 @@ I want to collide with the edge, but this presents a problem because it looks li
 Last note though: I made two basic behaviors for my npcs: the first is to establish an initial heading which should only occur when the square is completely motionless at the start of the game. The second is to accelerate up to their speed if they happen to be moving slower than it. This second one is not working quite right but I'm not going to fuss with it all that much just yet. I think it has to do with maintaining direction? I'm just arbitrarily choosing x or y and adding their accel value until speed is met.
 
 Oh yeah, one other thing I want to mention: Since I chose spots for the NPCs to spawn that may have a collidable object, there's a situation where if they choose to move in a direction that doesn't escape them from the collision of the object they're on top of then they can just stroll right off the game map. Helpful info probably, and this overlap thing I'll want to avoid during initial setup since collision should then prevent it from being an issue after the fact.
+
+Things to do:
+
+- [x] Make NPCs identifiable by mouse click/hover.
+  - [ ] I have a console log for now, but maybe some on-screen indicator?
+  - [ ] This seems actually somewhat tricky to get to work exactly with the sprites. Will need to revisit this later to clean it up I think.
+- [x] Make them move around the screen.
+- [ ] Let's get a bigger field to work with.
+- [ ] For god's sake, give them some clothes!
+- [ ] NPC Stat readout on screen.
+
+Proposed Init Sequence:
+
+- [x] Randomly determine gender
+- [ ] Faction from param (represented by color for now)
+- [ ] Class is Pleb (do other classes later)
+
+Movement:
+So I need to care about facing, right? It's based on the velocity of the element in question so I just need to find a way to define the four quadrants. Pulled this off in a basic form on the gameNpc class. Movement looks pretty nice so I'm gonna go around clean up my work and snapshot here.
+
+Collision:
+So my NPCs are walking through one another. I'm ok with this. I don't think NPCs should implicitly apply physics on each other when they can just resolve all that through 'combat'. Anyway, time for lunch!
