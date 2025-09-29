@@ -6,6 +6,7 @@
 
 // import LittleJS module
 import * as LJS from "../../dist/littlejs.esm.js";
+import * as GameNpc from "./gameNpc.js";
 import * as GameLevel from "./gameLevel.js";
 const { vec2, hsl, tile } = LJS;
 
@@ -30,6 +31,10 @@ async function gameInit() {
   // };
 
   GameLevel.buildLevel();
+
+  new GameNpc.NPC(vec2(2, 2), LJS.RED);
+  new GameNpc.NPC(vec2(7, 2), LJS.YELLOW);
+  new GameNpc.NPC(vec2(3, 7), LJS.BLUE);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -26,15 +26,23 @@ export function buildLevel() {
     mushroom: 2,
     frondTop: 3,
     frondBottom: 4,
-    stumpLeft: 5,
-    stumpRight: 6,
+    border: 5,
   };
 
   let levelSize = vec2(gameLevelData.width, gameLevelData.height);
 
   let mapLayer = new LJS.TileLayer(vec2(), levelSize, LJS.tile(0, 32, 0));
-  let objectLayer = new LJS.TileLayer(vec2(), levelSize, LJS.tile(0, 32, 1));
-  let treeLayer = new LJS.TileLayer(vec2(), levelSize, LJS.tile(0, 32, 0));
+  let objectLayer = new LJS.TileCollisionLayer(
+    vec2(),
+    levelSize,
+    LJS.tile(0, 32, 1)
+  );
+
+  let treeLayer = new LJS.TileCollisionLayer(
+    vec2(),
+    levelSize,
+    LJS.tile(0, 32, 0)
+  );
 
   let gameMap = gameLevelData.levelData;
   let objectMap = gameLevelData.objectData;
@@ -48,6 +56,7 @@ export function buildLevel() {
 
       let gameTileIndex;
       let objectTileIndex;
+      let tileType; //1 is collide, 0 is pass through, 2 is breakable
 
       const terrainAtlas = (x, y) => x + 32 * y;
       const scrollsAndBlocks = (x, y) => x + 16 * y;
@@ -87,22 +96,32 @@ export function buildLevel() {
       let layer;
       if (objectTile != objectLookup.empty) {
         if (objectTile == objectLookup.scroll) {
+          tileType = 1;
           objectTileIndex = scrollsAndBlocks(8, 2);
           layer = objectLayer;
         }
         if (objectTile == objectLookup.mushroom) {
+          tileType = 1;
           layer = treeLayer;
           objectTileIndex = terrainAtlas(26, 31);
         }
         if (objectTile == objectLookup.frondBottom) {
+          tileType = 1;
           layer = treeLayer;
           objectTileIndex = terrainAtlas(26, 30);
         }
         if (objectTile == objectLookup.frondTop) {
+          tileType = 0;
           layer = treeLayer;
           objectTileIndex = terrainAtlas(26, 29);
         }
+        if (objectTile == objectLookup.border) {
+          tileType = 1;
+          layer = objectLayer;
+          objectTileIndex = -1;
+        }
         const data = new LJS.TileLayerData(objectTileIndex, 0, 0, new Color());
+        layer.setCollisionData(pos, tileType);
         layer.setData(pos, data);
       }
 
