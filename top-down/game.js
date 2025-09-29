@@ -20,6 +20,9 @@ async function gameInit() {
   // load the game level data
   gameLevelData = await LJS.fetchJSON("gameLevelData.json");
 
+  // center the camera
+  LJS.setCameraPos(vec2(gameLevelData.width * 0.5, gameLevelData.height * 0.5));
+
   // // establish sprite atlas
   // const gameTile = (i, size = 32) => LJS.tile(i, size, 0, 1);
   // let spriteAtlas = {
@@ -33,6 +36,23 @@ async function gameInit() {
 function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
+
+  // mouse wheel = zoom
+  LJS.setCameraScale(
+    LJS.clamp(LJS.cameraScale * (1 - LJS.mouseWheel / 10), 1, 1e3)
+  );
+
+  if (LJS.keyWasPressed("KeyW") || LJS.keyWasPressed("ArrowUp"))
+    LJS.setCameraPos(vec2(LJS.cameraPos.x, LJS.cameraPos.y + 1));
+
+  if (LJS.keyWasPressed("KeyS") || LJS.keyWasPressed("ArrowDown"))
+    LJS.setCameraPos(vec2(LJS.cameraPos.x, LJS.cameraPos.y - 1));
+
+  if (LJS.keyWasPressed("KeyA") || LJS.keyWasPressed("ArrowLeft"))
+    LJS.setCameraPos(vec2(LJS.cameraPos.x - 1, LJS.cameraPos.y));
+
+  if (LJS.keyWasPressed("KeyD") || LJS.keyWasPressed("ArrowRight"))
+    LJS.setCameraPos(vec2(LJS.cameraPos.x + 1, LJS.cameraPos.y));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
