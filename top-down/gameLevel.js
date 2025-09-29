@@ -23,12 +23,18 @@ export function buildLevel() {
   const objectLookup = {
     empty: 0,
     scroll: 1,
+    mushroom: 2,
+    frondTop: 3,
+    frondBottom: 4,
+    stumpLeft: 5,
+    stumpRight: 6,
   };
 
   let levelSize = vec2(gameLevelData.width, gameLevelData.height);
 
   let mapLayer = new LJS.TileLayer(vec2(), levelSize, LJS.tile(0, 32, 0));
   let objectLayer = new LJS.TileLayer(vec2(), levelSize, LJS.tile(0, 32, 1));
+  let treeLayer = new LJS.TileLayer(vec2(), levelSize, LJS.tile(0, 32, 0));
 
   let gameMap = gameLevelData.levelData;
   let objectMap = gameLevelData.objectData;
@@ -78,12 +84,26 @@ export function buildLevel() {
         }
       }
 
+      let layer;
       if (objectTile != objectLookup.empty) {
         if (objectTile == objectLookup.scroll) {
           objectTileIndex = scrollsAndBlocks(8, 2);
+          layer = objectLayer;
+        }
+        if (objectTile == objectLookup.mushroom) {
+          layer = treeLayer;
+          objectTileIndex = terrainAtlas(26, 31);
+        }
+        if (objectTile == objectLookup.frondBottom) {
+          layer = treeLayer;
+          objectTileIndex = terrainAtlas(26, 30);
+        }
+        if (objectTile == objectLookup.frondTop) {
+          layer = treeLayer;
+          objectTileIndex = terrainAtlas(26, 29);
         }
         const data = new LJS.TileLayerData(objectTileIndex, 0, 0, new Color());
-        objectLayer.setData(pos, data);
+        layer.setData(pos, data);
       }
 
       //random element for later
@@ -104,4 +124,5 @@ export function buildLevel() {
     }
   mapLayer.redraw();
   objectLayer.redraw();
+  treeLayer.redraw();
 }
