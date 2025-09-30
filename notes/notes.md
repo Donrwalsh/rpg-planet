@@ -126,3 +126,22 @@ I want a rock. This rock is a game object and it can be destroyed. This will req
 - NPC ability to 'attack' a rock. This represents a non-walking state for NPCs. This caused me to learn more about raycasting which is pretty sweet. I have a very basic ray being sent in the direction the NPC is facing. Once this ray intersects with a rock, the NPC stops moving and switches to a combat idle animation.
 
 Awesome. This is doing what I want it to do. The NPC will, once they see an object they want to attack, move towards that object until they are within range at which point they'll start attacking via sprite animation. I'm not crazy happy with how the sprites look but it's a timing thing, not a positioning one.
+
+### 9/30/25
+
+This morning I woke up tired of looking at a static green map. I'm not feeling particularly generatively-creative, so I'm going to gather some example images that fit what I'm going for - the pinterest approach.
+
+I'm not really finding all that much, but two pictures caught my eye at the very least for working on some basic arrangement.
+
+Ok, so pivoting real quick to consider strategic layout. I'm doing some chatting with an AI to better understand tower-defense concepts and I gotta say it's very useful. (https://copilot.microsoft.com/shares/4WDjbjbvxWFz9i7BF51T6) One thing I'm noticing is a general adherence to the convention that the NPCs follow a predictable path in tower defense games and I guess my version doesn't really follow that convention. Maybe it should?
+
+Ok, let's be creative for a second. Suppose the factions drop to two instead of three. Then the issue of strategic layout becomes kinda simple, put a straight line down the center of the screen and split the layout in two. There are three main 'levels' to the map: The bottom of the screen is an open ended 'path' that leads off into either direction: the spawn point for both factions. At the center is a crossroads. The center part of the map is a forest/field that presents as an unkempt offshoot of the road but it holds a secret. . . The top of the map is the scroll shrine with tactical paths leading to the scroll. Nice, I like the way this looks in my head. Let's build it!
+
+- [ ] First I need a road.
+  - [ ] Just kidding, first I need a revisit to the gameLevel layering thinking.
+
+From the perspective of a road, I just need the 'ground' layer to be able to hold two tiles: One for the sprite representing the ground and then another for the tile representing growth like grass on the ground that should be placed on top of the ground. My current understanding is that this means I create two Tile Layers. I won't always need to populate the bottom one if the top one covers the entire square. Let me double-check my thinking on this because if I could somehow place two sprites onto the same layer then I'd prefer to do that.
+
+I like what I'm cooking up here. I can't think of a way to order the ground map sprites, so I'm just going to set it up to be sequential working from bottom left right and then upward like coordinates. I'll rearrange later.
+
+Ok, I've made some progress building it this way but I don't think I'm going to continue on this path. I can add logic that determines which of the edges/corners to choose based on surrounding information freeing me up to just indicate: ground and grass and then the logic takes care of the rest.
