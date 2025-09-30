@@ -119,3 +119,10 @@ Ok check this out. It occurs to me that I have all the necessary bits to build a
 I like a 36x60 map.
 
 Played around with color modulation on pants and shirt. White works best as a base color. I stress-tested it and hit problems with upwards of 500 NPCs. Should be good for a while!
+
+I want a rock. This rock is a game object and it can be destroyed. This will require a lot of things:
+
+- Rock as a game object with hp and other such attributes.
+- NPC ability to 'attack' a rock. This represents a non-walking state for NPCs. This caused me to learn more about raycasting which is pretty sweet. I have a very basic ray being sent in the direction the NPC is facing. Once this ray intersects with a rock, the NPC stops moving and switches to a combat idle animation.
+
+Awesome. This is doing what I want it to do. The NPC will, once they see an object they want to attack, move towards that object until they are within range at which point they'll start attacking via sprite animation. I'm not crazy happy with how the sprites look but it's a timing thing, not a positioning one.

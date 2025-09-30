@@ -8,6 +8,7 @@ import * as LJS from "../../dist/littlejs.esm.js";
 import { Color } from "../dist/littlejs.esm.js";
 const { vec2, hsl, tile } = LJS;
 import * as Game from "./game.js";
+import * as GameObjects from "./gameObject.js";
 
 export function buildLevel() {
   // destroy all objects
@@ -23,7 +24,7 @@ export function buildLevel() {
   const objectLookup = {
     empty: 0,
     scroll: 1,
-    mushroom: 2,
+    rock: 2,
     frondTop: 3,
     frondBottom: 4,
     border: 5,
@@ -100,10 +101,12 @@ export function buildLevel() {
           objectTileIndex = scrollsAndBlocks(8, 2);
           layer = objectLayer;
         }
-        if (objectTile == objectLookup.mushroom) {
+        if (objectTile == objectLookup.rock) {
+          const objectPos = pos.add(vec2(0.5));
+          new GameObjects.Rock(objectPos);
           tileType = 1;
           layer = treeLayer;
-          objectTileIndex = terrainAtlas(26, 31);
+          gameTileIndex = terrainAtlas(22, 3);
         }
         if (objectTile == objectLookup.frondBottom) {
           tileType = 1;

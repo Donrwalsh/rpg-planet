@@ -8,10 +8,11 @@
 import * as LJS from "../../dist/littlejs.esm.js";
 import * as GameNpc from "./gameNpc.js";
 import * as GameLevel from "./gameLevel.js";
+import * as GameObject from "./gameObject.js";
 const { vec2, hsl, tile } = LJS;
 
 // globals
-export let gameLevelData;
+export let gameLevelData, spriteAtlas;
 
 // npcs
 let npcs = [];
@@ -28,14 +29,15 @@ async function gameInit() {
   LJS.setCameraPos(vec2(gameLevelData.width * 0.5, gameLevelData.height * 0.5));
 
   // // establish sprite atlas
-  // const gameTile = (i, size = 32) => LJS.tile(i, size, 0, 1);
-  // let spriteAtlas = {
-  //   grass: gameTile(0),
-  // };
+  const gameTile = (i, size = vec2(32)) => LJS.tile(i, size, 0, 0);
+
+  spriteAtlas = {
+    rock: gameTile(vec2(26, 25), 32),
+  };
 
   GameLevel.buildLevel();
 
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 25; i++) {
     npcs.push(
       new GameNpc.NPC(
         vec2(LJS.randInt(5, 20), LJS.randInt(5, 20)),
@@ -75,6 +77,13 @@ function gameUpdate() {
   );
   if (clickedOnNpc) {
     console.log(clickedOnNpc.name);
+  }
+
+  if (LJS.mouseWasPressed(0)) {
+    // Places on top, which I don't like, but the flooring at least keeps it to a grid.
+    new GameObject.Rock(
+      vec2(Math.floor(LJS.mousePos.x), Math.floor(LJS.mousePos.y))
+    );
   }
 }
 

@@ -22,3 +22,17 @@
 - [ ] Embrace https://lpc.opengameart.org/static/LPC-Style-Guide/build/index.html#
 - [ ] Need a repeatable process for early times of exporting stuff from the generator by hand.
 - [ ] Learn about crediting these assets that I'm going to be using.
+
+### 9/29/25
+
+- [ ] expand sight-raycasting to be more than just a straight line ahead.
+  - [ ] This will probably require some sort of trig =(
+- [ ] Adding stuff like the player's mana and on-screen indicators for NPC data and spellcasting shenanigans.
+- [ ] gameLevel is looking great, but its whole layering situation is a mess. I have some physical notes about how I might make this better but they are underneath stuff.
+- [ ] Clean up the Frond stuff in gameLevel and the gameLevelData.
+- [ ] Make the scroll a touchable object and tie it to the game finishing.
+- [ ] The 'state' system of the NPCs is rather primitive right now. Certainly needs to be expanded, considering a priority system to guide decision-making.
+- [ ] NPCs should spawn differently. Could establish some stand-in for an actual respawn mechanic. Timer-driven spawns with spawn-points.
+- [ ] So NPCs have acceleration, but you can't really notice it at all. This is a symptom of doing everything one frame at a time. Gotta keep that in mind for balancing concepts.
+- [ ] Rendering uses a lot of repeated code for the different 'slots'.
+- [ ] Is rendering slow because of how I'm doing it?
