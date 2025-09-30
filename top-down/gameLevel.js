@@ -48,13 +48,13 @@ export function buildLevel() {
     border: 5,
   };
 
-  let objectLayer = new LJS.TileCollisionLayer(
+  let scrollLayer = new LJS.TileCollisionLayer(
     vec2(),
     levelSize,
     LJS.tile(0, 32, 1)
   );
 
-  let treeLayer = new LJS.TileCollisionLayer(
+  let objectLayer = new LJS.TileCollisionLayer(
     vec2(),
     levelSize,
     LJS.tile(0, 32, 0)
@@ -101,28 +101,28 @@ export function buildLevel() {
         if (objectTile == objectLookup.scroll) {
           tileType = 1;
           objectTileIndex = scrollsAndBlocks(8, 2);
-          layer = objectLayer;
+          layer = scrollLayer;
         }
         if (objectTile == objectLookup.rock) {
           const objectPos = pos.add(vec2(0.5));
           new GameObjects.Rock(objectPos);
           tileType = 1;
-          layer = treeLayer;
+          layer = objectLayer;
           gameTileIndex = terrainAtlas(22, 3);
         }
         if (objectTile == objectLookup.frondBottom) {
           tileType = 1;
-          layer = treeLayer;
+          layer = objectLayer;
           objectTileIndex = terrainAtlas(26, 30);
         }
         if (objectTile == objectLookup.frondTop) {
           tileType = 0;
-          layer = treeLayer;
+          layer = objectLayer;
           objectTileIndex = terrainAtlas(26, 29);
         }
         if (objectTile == objectLookup.border) {
           tileType = 1;
-          layer = objectLayer;
+          layer = scrollLayer;
           objectTileIndex = -1;
         }
         const data = new LJS.TileLayerData(objectTileIndex, 0, 0, new Color());
@@ -147,8 +147,8 @@ export function buildLevel() {
     }
   groundBottomLayer.redraw();
   groundTopLayer.redraw();
+  scrollLayer.redraw();
   objectLayer.redraw();
-  treeLayer.redraw();
 }
 
 function getGroundTopIndex(x, y, groundMap, levelSize, groundTileLookup) {

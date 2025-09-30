@@ -36,3 +36,9 @@
 - [ ] So NPCs have acceleration, but you can't really notice it at all. This is a symptom of doing everything one frame at a time. Gotta keep that in mind for balancing concepts.
 - [ ] Rendering uses a lot of repeated code for the different 'slots'.
 - [ ] Is rendering slow because of how I'm doing it?
+
+### 9/30/25
+
+- [ ] Complete the raycast expansion for the other directions!
+- [ ] Add a two (four) new domestic routes!
+- [ ] Just further improvements on NPC behavior, but I like the core of what's going on here.

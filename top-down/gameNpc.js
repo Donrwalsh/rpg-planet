@@ -10,22 +10,40 @@ const atlas = {
 };
 
 export class NPC extends LJS.EngineObject {
-  constructor(pos, color) {
+  constructor(color, path, missionCompleteCallback) {
+    let pos = path[0];
     let size = LJS.vec2(0.5);
     super(pos, size);
-    this.pos = pos;
+
+    this.pos = path[0].copy();
+    this.missionCompleteCallback = (x) => missionCompleteCallback(x);
+
+    this.path = path;
+    this.destination = path[path.length - 1];
+
+    this.gender = LJS.randInt(2);
+
+    this.stat_strength = 1 + LJS.randInt(2);
+    this.stat_speed = 1 + LJS.randInt(2);
+    this.stat_smarts = 1 + LJS.randInt(2);
+    this.stat_senses = 1 + LJS.randInt(2);
+
+    this.speed = 0.02 + 0.001 * this.stat_speed;
+    this.attentionSpan = 2.5 - this.stat_smarts * 0.05;
+    this.sightRange = 2 + 0.1 * this.stat_senses;
+    this.sightWidth = 0.25 + 0.01 * this.stat_senses;
+
     this.color = color;
     this.occupied = false;
     this.target;
     this.facing;
 
-    this.reach = 1;
+    // This is still wonky
+    this.reach = 2;
 
     this.attackSpeed = 2;
     this.attackTimer = new Timer();
     this.walkTimer = new Timer();
-
-    this.gender = LJS.randInt(2);
 
     this.name = {
       [LJS.RED]: "red",
@@ -33,21 +51,30 @@ export class NPC extends LJS.EngineObject {
       [LJS.BLUE]: "blue",
     }[this.color];
 
-    this.speed = 0.025;
-    this.accel = 0.001;
-    // this.accelChance = 0.4;
-    this.sightRange = 5;
-    this.sightWidth = 3;
     this.setCollision();
   }
 
   getFirstObjectSeen() {
     let seenObjects;
     if (this.getFacing() == 0) {
-      seenObjects = LJS.engineObjectsRaycast(
-        this.pos,
-        this.pos.add(LJS.vec2(0, this.sightRange))
+      // This works like a charm but is pretty unwieldy. Would love to generalize it further.
+      let baseRaycastVector = this.pos.add(LJS.vec2(0, this.sightRange));
+      let leftRaycastVector = this.pos.add(
+        LJS.vec2(
+          -1 * this.sightWidth * this.sightRange,
+          (1 - this.sightWidth) * this.sightRange
+        ).normalize(this.sightRange)
       );
+      let rightRaycastVector = this.pos.add(
+        LJS.vec2(
+          this.sightWidth * this.sightRange,
+          (1 - this.sightWidth) * this.sightRange
+        ).normalize(this.sightRange)
+      );
+
+      seenObjects = LJS.engineObjectsRaycast(this.pos, baseRaycastVector)
+        .concat(LJS.engineObjectsRaycast(this.pos, leftRaycastVector))
+        .concat(LJS.engineObjectsRaycast(this.pos, rightRaycastVector));
     }
     if (this.getFacing() == 1) {
       seenObjects = LJS.engineObjectsRaycast(
@@ -77,17 +104,11 @@ export class NPC extends LJS.EngineObject {
   }
 
   render() {
-    if (this.attackTimer.isSet() && this.target.isDead()) {
+    // this.getFirstObjectSeen();
+    if (this.attackTimer.isSet() && this.target.hp == 0) {
       this.occupied = false;
       this.attackTimer.unset();
       this.walkTimer.unset();
-      // const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
-      // const randX = this.speed - randY;
-      // //   console.log(
-      // //     `${this.name} is not moving. Establishing initial heading of (${randX}, ${randY})`
-      // //   );
-      // this.velocity.y = LJS.randSign() * randY;
-      // this.velocity.x = LJS.randSign() * randX;
     }
 
     if (this.walkTimer.isSet()) {
@@ -107,101 +128,36 @@ export class NPC extends LJS.EngineObject {
           .normalize(this.speed);
       } else {
         // LJS.drawRect(this.pos, this.size, this.color);
-        let things = [
-          {
-            tilePos: vec2(1, 1),
-            nextTile: vec2(3, 3),
-          },
-          {
-            tilePos: vec2(3, 3),
-            nextTile: vec2(5, 5),
-          },
-          {
-            tilePos: vec2(5, 5),
-            nextTile: vec2(7, 7),
-          },
-          {
-            tilePos: vec2(7, 7),
-            nextTile: vec2(9, 7),
-          },
-          {
-            tilePos: vec2(9, 7),
-            nextTile: vec2(11, 7),
-          },
-          {
-            tilePos: vec2(11, 7),
-            nextTile: vec2(13, 7),
-          },
-          {
-            tilePos: vec2(13, 7),
-            nextTile: vec2(15, 7),
-          },
-          {
-            tilePos: vec2(15, 7),
-            nextTile: vec2(17, 7),
-          },
-          {
-            tilePos: vec2(17, 7),
-            nextTile: vec2(18, 7),
-          },
-          {
-            tilePos: vec2(18, 7),
-            nextTile: vec2(20, 5),
-          },
-          {
-            tilePos: vec2(20, 5),
-            nextTile: vec2(22, 3),
-          },
-          {
-            tilePos: vec2(22, 3),
-            nextTile: vec2(24, 1),
-          },
-        ];
+
         this.occupied = true;
 
-        this.walkTimer.set(2);
+        this.walkTimer.set(this.attentionSpan);
 
         let smallestDistance = 100; //arbitrary high value
-        let nearestThing;
+        let nearestPathPoint;
 
-        things.forEach((thing) => {
-          if (thing.tilePos.distance(this.pos) < smallestDistance) {
-            smallestDistance = thing.tilePos.distance(this.pos);
-            nearestThing = thing;
+        this.path.forEach((point) => {
+          if (point.distance(this.pos) < smallestDistance) {
+            smallestDistance = point.distance(this.pos);
+            nearestPathPoint = point;
           }
         });
 
-        this.velocity = nearestThing.nextTile
+        if (nearestPathPoint == this.destination) {
+          console.log("I did it!");
+          this.missionCompleteCallback(1);
+          this.destroy();
+          return;
+        }
+
+        this.velocity = this.path[this.path.indexOf(nearestPathPoint) + 1]
+          .copy()
           .subtract(this.pos)
           .normalize()
           .rotate(LJS.rand(-0.2, 0.2))
           .multiply(vec2(this.speed));
-        // // Choose a random direction.
-        // // abs of both vector values should = npc speed.
-        // const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
-        // const randX = this.speed - randY;
-        // //   console.log(
-        // //     `${this.name} is not moving. Establishing initial heading of (${randX}, ${randY})`
-        // //   );
-        // this.velocity.y = LJS.randSign() * randY;
-        // this.velocity.x = LJS.randSign() * randX;
 
-        // Just assumed to be walking all the time:
         this.renderWalk();
-
-        if (LJS.abs(this.velocity.x) + LJS.abs(this.velocity.x) < this.speed) {
-          //   console.log(
-          //     `${this.name} is moving too slow: (${this.velocity.x}, ${this.velocity.y})`
-          //   );
-          let coinFlip = LJS.randInt(2);
-          if (coinFlip) {
-            let velocitySign = this.velocity.x > 0 ? 1 : -1;
-            this.velocity.x = this.velocity.x + this.accel * velocitySign;
-          } else {
-            let velocitySign = this.velocity.y > 0 ? 1 : -1;
-            this.velocity.y = this.velocity.y + this.accel * velocitySign;
-          }
-        }
       }
     } else if (this.target) {
       if (this.pos.distance(this.target.pos) <= this.reach) {
@@ -372,9 +328,7 @@ export class NPC extends LJS.EngineObject {
   }
 
   collideWithObject(o) {
-    // if (o.hp > 1) {
-    //   console.log("potato");
-    // }
+    // console.log(o);
   }
 
   getTilePos(action, dir) {

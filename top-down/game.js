@@ -9,6 +9,7 @@ import * as LJS from "../../dist/littlejs.esm.js";
 import * as GameNpc from "./gameNpc.js";
 import * as GameLevel from "./gameLevel.js";
 import * as GameObject from "./gameObject.js";
+import * as GameKingdom from "./gameKingdom.js";
 const { vec2, hsl, tile } = LJS;
 
 // globals
@@ -16,7 +17,7 @@ export let gameLevelData, spriteAtlas;
 
 // npcs
 let npcs = [];
-let npcTimer;
+let redKingdom = new GameKingdom.Kingdom();
 
 ///////////////////////////////////////////////////////////////////////////////
 async function gameInit() {
@@ -39,18 +40,9 @@ async function gameInit() {
 
   GameLevel.buildLevel();
 
-  npcTimer = new LJS.Timer(5);
+  npcs.push(redKingdom.generateNPC());
 
-  // Make lots of NPCs:
-  // for (let i = 0; i < 25; i++) {
-  //   npcs.push(
-  //     new GameNpc.NPC(
-  //       vec2(LJS.randInt(5, 20), LJS.randInt(5, 20)),
-  //       [LJS.RED, LJS.YELLOW, LJS.BLUE][LJS.randInt(3)]
-  //     )
-  //   );
-  // }
-  npcs.push(new GameNpc.NPC(vec2(0), LJS.RED));
+  redKingdom.spawnTimer.set(redKingdom.spawnTime);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,9 +50,9 @@ function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
 
-  if (npcTimer.elapsed()) {
-    npcs.push(new GameNpc.NPC(vec2(0), LJS.RED));
-    npcTimer.set(5);
+  if (redKingdom.spawnTimer.elapsed()) {
+    npcs.push(redKingdom.generateNPC());
+    redKingdom.spawnTimer.set(redKingdom.spawnTime);
   }
 
   // mouse wheel = zoom
@@ -87,7 +79,7 @@ function gameUpdate() {
     LJS.isOverlapping(npc.pos.add(LJS.vec2(0, 0.65)), LJS.vec2(2), LJS.mousePos)
   );
   if (clickedOnNpc) {
-    console.log(clickedOnNpc.name);
+    console.log(clickedOnNpc);
   }
 
   if (LJS.mouseWasPressed(0)) {
