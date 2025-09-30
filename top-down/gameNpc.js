@@ -23,6 +23,7 @@ export class NPC extends LJS.EngineObject {
 
     this.attackSpeed = 2;
     this.attackTimer = new Timer();
+    this.walkTimer = new Timer();
 
     this.gender = LJS.randInt(2);
 
@@ -32,7 +33,7 @@ export class NPC extends LJS.EngineObject {
       [LJS.BLUE]: "blue",
     }[this.color];
 
-    this.speed = 0.03;
+    this.speed = 0.025;
     this.accel = 0.001;
     // this.accelChance = 0.4;
     this.sightRange = 5;
@@ -79,13 +80,21 @@ export class NPC extends LJS.EngineObject {
     if (this.attackTimer.isSet() && this.target.isDead()) {
       this.occupied = false;
       this.attackTimer.unset();
-      const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
-      const randX = this.speed - randY;
-      //   console.log(
-      //     `${this.name} is not moving. Establishing initial heading of (${randX}, ${randY})`
-      //   );
-      this.velocity.y = LJS.randSign() * randY;
-      this.velocity.x = LJS.randSign() * randX;
+      this.walkTimer.unset();
+      // const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
+      // const randX = this.speed - randY;
+      // //   console.log(
+      // //     `${this.name} is not moving. Establishing initial heading of (${randX}, ${randY})`
+      // //   );
+      // this.velocity.y = LJS.randSign() * randY;
+      // this.velocity.x = LJS.randSign() * randX;
+    }
+
+    if (this.walkTimer.isSet()) {
+      this.renderWalk();
+      if (this.walkTimer.elapsed()) {
+        this.occupied = false;
+      }
     }
 
     if (this.unoccupied()) {
@@ -98,17 +107,85 @@ export class NPC extends LJS.EngineObject {
           .normalize(this.speed);
       } else {
         // LJS.drawRect(this.pos, this.size, this.color);
-        if (this.velocity.x == 0 || this.velocity.y == 0) {
-          // Choose a random direction.
-          // abs of both vector values should = npc speed.
-          const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
-          const randX = this.speed - randY;
-          //   console.log(
-          //     `${this.name} is not moving. Establishing initial heading of (${randX}, ${randY})`
-          //   );
-          this.velocity.y = LJS.randSign() * randY;
-          this.velocity.x = LJS.randSign() * randX;
-        }
+        let things = [
+          {
+            tilePos: vec2(1, 1),
+            nextTile: vec2(3, 3),
+          },
+          {
+            tilePos: vec2(3, 3),
+            nextTile: vec2(5, 5),
+          },
+          {
+            tilePos: vec2(5, 5),
+            nextTile: vec2(7, 7),
+          },
+          {
+            tilePos: vec2(7, 7),
+            nextTile: vec2(9, 7),
+          },
+          {
+            tilePos: vec2(9, 7),
+            nextTile: vec2(11, 7),
+          },
+          {
+            tilePos: vec2(11, 7),
+            nextTile: vec2(13, 7),
+          },
+          {
+            tilePos: vec2(13, 7),
+            nextTile: vec2(15, 7),
+          },
+          {
+            tilePos: vec2(15, 7),
+            nextTile: vec2(17, 7),
+          },
+          {
+            tilePos: vec2(17, 7),
+            nextTile: vec2(18, 7),
+          },
+          {
+            tilePos: vec2(18, 7),
+            nextTile: vec2(20, 5),
+          },
+          {
+            tilePos: vec2(20, 5),
+            nextTile: vec2(22, 3),
+          },
+          {
+            tilePos: vec2(22, 3),
+            nextTile: vec2(24, 1),
+          },
+        ];
+        this.occupied = true;
+
+        this.walkTimer.set(2);
+
+        let smallestDistance = 100; //arbitrary high value
+        let nearestThing;
+
+        things.forEach((thing) => {
+          if (thing.tilePos.distance(this.pos) < smallestDistance) {
+            smallestDistance = thing.tilePos.distance(this.pos);
+            nearestThing = thing;
+          }
+        });
+
+        this.velocity = nearestThing.nextTile
+          .subtract(this.pos)
+          .normalize()
+          .rotate(LJS.rand(-0.2, 0.2))
+          .multiply(vec2(this.speed));
+        // // Choose a random direction.
+        // // abs of both vector values should = npc speed.
+        // const randY = Math.floor(LJS.rand(0, this.speed) * 1000) / 1000;
+        // const randX = this.speed - randY;
+        // //   console.log(
+        // //     `${this.name} is not moving. Establishing initial heading of (${randX}, ${randY})`
+        // //   );
+        // this.velocity.y = LJS.randSign() * randY;
+        // this.velocity.x = LJS.randSign() * randX;
+
         // Just assumed to be walking all the time:
         this.renderWalk();
 
@@ -126,7 +203,7 @@ export class NPC extends LJS.EngineObject {
           }
         }
       }
-    } else {
+    } else if (this.target) {
       if (this.pos.distance(this.target.pos) <= this.reach) {
         this.velocity.x = 0;
         this.velocity.y = 0;

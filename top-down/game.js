@@ -16,6 +16,7 @@ export let gameLevelData, spriteAtlas;
 
 // npcs
 let npcs = [];
+let npcTimer;
 
 ///////////////////////////////////////////////////////////////////////////////
 async function gameInit() {
@@ -27,6 +28,7 @@ async function gameInit() {
 
   // center the camera
   LJS.setCameraPos(vec2(gameLevelData.width * 0.5, gameLevelData.height * 0.5));
+  LJS.setCameraScale(29);
 
   // // establish sprite atlas
   const gameTile = (i, size = vec2(32)) => LJS.tile(i, size, 0, 0);
@@ -37,14 +39,18 @@ async function gameInit() {
 
   GameLevel.buildLevel();
 
-  for (let i = 0; i < 25; i++) {
-    npcs.push(
-      new GameNpc.NPC(
-        vec2(LJS.randInt(5, 20), LJS.randInt(5, 20)),
-        [LJS.RED, LJS.YELLOW, LJS.BLUE][LJS.randInt(3)]
-      )
-    );
-  }
+  npcTimer = new LJS.Timer(5);
+
+  // Make lots of NPCs:
+  // for (let i = 0; i < 25; i++) {
+  //   npcs.push(
+  //     new GameNpc.NPC(
+  //       vec2(LJS.randInt(5, 20), LJS.randInt(5, 20)),
+  //       [LJS.RED, LJS.YELLOW, LJS.BLUE][LJS.randInt(3)]
+  //     )
+  //   );
+  // }
+  npcs.push(new GameNpc.NPC(vec2(0), LJS.RED));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,7 +58,10 @@ function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
 
-  LJS.setCameraScale(29);
+  if (npcTimer.elapsed()) {
+    npcs.push(new GameNpc.NPC(vec2(0), LJS.RED));
+    npcTimer.set(5);
+  }
 
   // mouse wheel = zoom
   LJS.setCameraScale(

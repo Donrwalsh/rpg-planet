@@ -147,3 +147,12 @@ I like what I'm cooking up here. I can't think of a way to order the ground map 
 Ok, I've made some progress building it this way but I don't think I'm going to continue on this path. I can add logic that determines which of the edges/corners to choose based on surrounding information freeing me up to just indicate: ground and grass and then the logic takes care of the rest.
 
 Yeah, so for the core ground layer I don't even need to worry about the map since I'm going to be placing the same thing everywhere. Maybe with some random decoration later, but this version of getGroundBottomIndex feels clean.
+
+Next idea is to establish a movement situation for the NPCs that simulates a realistic everyday hustle & bustle. What I came up with is pretty cool. There's a path that's created by establishing a sequence of positions in the world and the next location in the path. each time the NPC needs a place to walk towards, it will find the nearest location in the sequence to itself and then move in a direction towards the next step in the sequence with a bit of random turning and normalized by their speed. Slick.
+
+Looks pretty goofy without any collision between the NPCs at 1/sec. At 5/sec it looks pretty dang realistic, especially when I start mixing in additional paths. Sweet, I should do that next. Or maybe get the despawning working.
+
+- [ ] Make a 2nd path.
+  - [ ] Reconsider the data structure of the 'thing' object?
+- [ ] Make 'spawn' and 'despawn' points for the NPCs. Maybe just need one spawn point object? Could designate where an npc is eligible to despawn. . .
+  - Since this requires collision, I'm probably best off fussing with the additional layers before I work the spawning/despawning tie-in to NPCs. But, I'll think on it some more first.
