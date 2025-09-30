@@ -52,6 +52,8 @@ function gameUpdate() {
   // called every frame at 60 frames per second
   // handle input and update the game state
 
+  LJS.setCameraScale(29);
+
   // mouse wheel = zoom
   LJS.setCameraScale(
     LJS.clamp(LJS.cameraScale * (1 - LJS.mouseWheel / 10), 1, 1e3)

@@ -145,3 +145,5 @@ From the perspective of a road, I just need the 'ground' layer to be able to hol
 I like what I'm cooking up here. I can't think of a way to order the ground map sprites, so I'm just going to set it up to be sequential working from bottom left right and then upward like coordinates. I'll rearrange later.
 
 Ok, I've made some progress building it this way but I don't think I'm going to continue on this path. I can add logic that determines which of the edges/corners to choose based on surrounding information freeing me up to just indicate: ground and grass and then the logic takes care of the rest.
+
+Yeah, so for the core ground layer I don't even need to worry about the map since I'm going to be placing the same thing everywhere. Maybe with some random decoration later, but this version of getGroundBottomIndex feels clean.

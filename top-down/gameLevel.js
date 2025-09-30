@@ -19,17 +19,8 @@ export function buildLevel() {
 
   // Bottom-most layers (Ground)
   const groundTileLookup = {
-    bottomLeftRoad: 0,
-    bottomRoad: 1,
-    bottomRightRoad: 2,
-    leftRoad: 3,
-    road: 4,
-    rightRoad: 5,
-    roadGrassFlat: 6,
-
-    // grass: 400,
-    // grassEdge: 500,
-    // grassStreetMix: 600,
+    empty: 0,
+    grass: 1,
   };
 
   const groundMap = gameLevelData.groundData;
@@ -73,44 +64,21 @@ export function buildLevel() {
 
   for (let x = levelSize.x; x--; )
     for (let y = levelSize.y; y--; ) {
-      const groundTile = groundMap[y][x];
       const objectTile = objectMap[y][x];
 
       const pos = vec2(x, levelSize.y - 1 - y);
       const terrainAtlas = (x, y) => x + 32 * y;
       const scrollsAndBlocks = (x, y) => x + 16 * y;
 
-      // Ground Layer
-      let groundBottomIndex;
-      let groundTopIndex;
-
-      switch (groundTile) {
-        case groundTileLookup.bottomLeftRoad:
-          groundBottomIndex = terrainAtlas(18, 4);
-          break;
-        case groundTileLookup.bottomRoad:
-          groundBottomIndex = terrainAtlas(19, 4);
-          break;
-        case groundTileLookup.bottomRightRoad:
-          groundBottomIndex = terrainAtlas(20, 4);
-          break;
-        case groundTileLookup.leftRoad:
-          groundBottomIndex = terrainAtlas(18, 3);
-          break;
-        case groundTileLookup.road:
-        case groundTileLookup.roadGrassFlat:
-          groundBottomIndex = terrainAtlas(19, 3);
-          break;
-        case groundTileLookup.rightRoad:
-          groundBottomIndex = terrainAtlas(20, 3);
-          break;
-      }
-
-      switch (groundTile) {
-        case groundTileLookup.roadGrassFlat:
-          groundTopIndex = terrainAtlas(22, 4);
-          break;
-      }
+      // New, sparkly approach:
+      let groundBottomIndex = getGroundBottomIndex(x, y, levelSize);
+      let groundTopIndex = getGroundTopIndex(
+        x,
+        y,
+        groundMap,
+        levelSize,
+        groundTileLookup
+      );
 
       if (groundBottomIndex) {
         groundBottomLayer.setData(
@@ -123,94 +91,192 @@ export function buildLevel() {
         groundTopLayer.setData(pos, new LJS.TileLayerData(groundTopIndex));
       }
 
-      // let gameTileIndex;
-      // let objectTileIndex;
-      // let tileType; //1 is collide, 0 is pass through, 2 is breakable
+      // Old, worn-down approach:
+      let gameTileIndex;
+      let objectTileIndex;
+      let tileType; //1 is collide, 0 is pass through, 2 is breakable
 
-      // if (groundTile == levelTileLookup.grass) {
-      //   gameTileIndex = terrainAtlas(22, 3);
-      // }
+      let layer;
+      if (objectTile != objectLookup.empty) {
+        if (objectTile == objectLookup.scroll) {
+          tileType = 1;
+          objectTileIndex = scrollsAndBlocks(8, 2);
+          layer = objectLayer;
+        }
+        if (objectTile == objectLookup.rock) {
+          const objectPos = pos.add(vec2(0.5));
+          new GameObjects.Rock(objectPos);
+          tileType = 1;
+          layer = treeLayer;
+          gameTileIndex = terrainAtlas(22, 3);
+        }
+        if (objectTile == objectLookup.frondBottom) {
+          tileType = 1;
+          layer = treeLayer;
+          objectTileIndex = terrainAtlas(26, 30);
+        }
+        if (objectTile == objectLookup.frondTop) {
+          tileType = 0;
+          layer = treeLayer;
+          objectTileIndex = terrainAtlas(26, 29);
+        }
+        if (objectTile == objectLookup.border) {
+          tileType = 1;
+          layer = objectLayer;
+          objectTileIndex = -1;
+        }
+        const data = new LJS.TileLayerData(objectTileIndex, 0, 0, new Color());
+        layer.setCollisionData(pos, tileType);
+        layer.setData(pos, data);
+      }
 
-      // if (groundTile == levelTileLookup.grassEdge) {
-      //   if (x == 0 && y == 0) {
-      //     // top left
-      //     gameTileIndex = terrainAtlas(21, 2);
-      //   } else if (x == 0 && y == levelSize.y - 1) {
-      //     // bottom left
-      //     gameTileIndex = terrainAtlas(21, 4);
-      //   } else if (y == 0 && x == levelSize.x - 1) {
-      //     // top right
-      //     gameTileIndex = terrainAtlas(23, 2);
-      //   } else if (y == levelSize.y - 1 && x == levelSize.x - 1) {
-      //     // bottom right
-      //     gameTileIndex = terrainAtlas(23, 4);
-      //   } else if (x == 0) {
-      //     // left wall
-      //     gameTileIndex = terrainAtlas(21, 3);
-      //   } else if (y == 0) {
-      //     // top wall
-      //     gameTileIndex = terrainAtlas(22, 2);
-      //   } else if (x == levelSize.x - 1) {
-      //     // right wall
-      //     gameTileIndex = terrainAtlas(23, 3);
-      //   } else if (y == levelSize.y - 1) {
-      //     // bottom wall
-      //     gameTileIndex = terrainAtlas(22, 4);
-      //   }
-      // }
+      //random element for later
+      let randomize = false;
 
-      // let layer;
-      // if (objectTile != objectLookup.empty) {
-      //   if (objectTile == objectLookup.scroll) {
-      //     tileType = 1;
-      //     objectTileIndex = scrollsAndBlocks(8, 2);
-      //     layer = objectLayer;
-      //   }
-      //   if (objectTile == objectLookup.rock) {
-      //     const objectPos = pos.add(vec2(0.5));
-      //     new GameObjects.Rock(objectPos);
-      //     tileType = 1;
-      //     layer = treeLayer;
-      //     gameTileIndex = terrainAtlas(22, 3);
-      //   }
-      //   if (objectTile == objectLookup.frondBottom) {
-      //     tileType = 1;
-      //     layer = treeLayer;
-      //     objectTileIndex = terrainAtlas(26, 30);
-      //   }
-      //   if (objectTile == objectLookup.frondTop) {
-      //     tileType = 0;
-      //     layer = treeLayer;
-      //     objectTileIndex = terrainAtlas(26, 29);
-      //   }
-      //   if (objectTile == objectLookup.border) {
-      //     tileType = 1;
-      //     layer = objectLayer;
-      //     objectTileIndex = -1;
-      //   }
-      //   const data = new LJS.TileLayerData(objectTileIndex, 0, 0, new Color());
-      //   layer.setCollisionData(pos, tileType);
-      //   layer.setData(pos, data);
-      // }
-
-      // //random element for later
-      // let randomize = false;
-
-      // let direction = randomize ? LJS.randInt(4) : 0;
-      // let mirror = randomize ? LJS.randInt(2) : 0;
-      // let color = randomize
-      //   ? LJS.randColor(hsl(0, 0, 0.2), hsl(0, 0, 0.8))
-      //   : new Color();
-      // const data = new LJS.TileLayerData(
-      //   gameTileIndex,
-      //   direction,
-      //   mirror,
-      //   color
-      // );
-      // mapLayer.setData(pos, data);
+      let direction = randomize ? LJS.randInt(4) : 0;
+      let mirror = randomize ? LJS.randInt(2) : 0;
+      let color = randomize
+        ? LJS.randColor(hsl(0, 0, 0.2), hsl(0, 0, 0.8))
+        : new Color();
+      const data = new LJS.TileLayerData(
+        gameTileIndex,
+        direction,
+        mirror,
+        color
+      );
     }
   groundBottomLayer.redraw();
   groundTopLayer.redraw();
   objectLayer.redraw();
   treeLayer.redraw();
+}
+
+function getGroundTopIndex(x, y, groundMap, levelSize, groundTileLookup) {
+  const terrainAtlas = (b, c) => b + 32 * c;
+  const groundTile = groundMap[y][x];
+
+  if (groundTile == groundTileLookup.grass) {
+    const grassToBottomLeft =
+      y == levelSize.y - 1 ? false : x == 0 ? false : groundMap[y + 1][x - 1];
+    const grassBelow =
+      y == levelSize.y - 1
+        ? false
+        : groundMap[y + 1][x] == groundTileLookup.grass;
+    const grassToBottomRight =
+      y == levelSize.y - 1
+        ? false
+        : x == levelSize.x - 1
+        ? false
+        : groundMap[y + 1][x + 1];
+    const grassToTheLeft =
+      x == 0 ? false : groundMap[y][x - 1] == groundTileLookup.grass;
+    const grassToTheRight =
+      x == levelSize.x - 1
+        ? false
+        : groundMap[y][x + 1] == groundTileLookup.grass;
+    const grassToTopLeft =
+      y == 0
+        ? false
+        : x == 0
+        ? false
+        : groundMap[y - 1][x - 1] == groundTileLookup.grass;
+    const grassAbove =
+      y == 0 ? false : groundMap[y - 1][x] == groundTileLookup.grass;
+    const grassToTopRight =
+      y == 0
+        ? false
+        : x == levelSize.x - 1
+        ? false
+        : groundMap[y - 1][x + 1] == groundTileLookup.grass;
+
+    // not sure about these:
+    const emptyToLeft =
+      x == 0 ? false : groundMap[y][x - 1] == groundTileLookup.empty;
+    const emptyToRight =
+      x == levelSize.x - 1
+        ? false
+        : groundMap[y][x + 1] == groundTileLookup.empty;
+
+    if (!grassBelow) {
+      if (!grassToTheLeft) {
+        // bottom left
+        return terrainAtlas(21, 4);
+      } else if (!grassToTheRight) {
+        // bottom right
+        return terrainAtlas(23, 4);
+      } else {
+        // bottom
+        return terrainAtlas(22, 4);
+      }
+    } else if (!grassAbove) {
+      if (!grassToTheLeft) {
+        // top left
+        return terrainAtlas(21, 2);
+      } else if (!grassToTheRight) {
+        // top right
+        return terrainAtlas(23, 2);
+      } else {
+        // top
+        return terrainAtlas(22, 2);
+      }
+    } else if (!grassToBottomLeft && x != 0 && !emptyToLeft) {
+      return terrainAtlas(23, 0);
+    } else if (!grassToBottomRight && x != levelSize.x - 1 && !emptyToRight) {
+      return terrainAtlas(22, 0);
+    } else if (!grassToTopLeft && x != 0 && !emptyToLeft) {
+      return terrainAtlas(23, 1);
+    } else if (!grassToTopRight && x != levelSize.x - 1 && !emptyToRight) {
+      return terrainAtlas(22, 1);
+    } else {
+      if (!grassToTheLeft) {
+        // left
+        return terrainAtlas(21, 3);
+      } else if (!grassToTheRight) {
+        // right
+        return terrainAtlas(23, 3);
+      } else {
+        //
+        return terrainAtlas(22, 3);
+      }
+    }
+  }
+}
+
+function getGroundBottomIndex(x, y, levelSize) {
+  const terrainAtlas = (b, c) => b + 32 * c;
+
+  if (y == levelSize.y - 1) {
+    if (x == 0) {
+      // bottom left
+      return terrainAtlas(18, 4);
+    } else if (x == levelSize.x - 1) {
+      // bottom right
+      return terrainAtlas(20, 4);
+    } else {
+      // bottom
+      return terrainAtlas(19, 4);
+    }
+  } else if (y < levelSize.y - 1 && y > 0) {
+    if (x == 0) {
+      // left
+      return terrainAtlas(18, 3);
+    } else if (x == levelSize.x - 1) {
+      // right
+      return terrainAtlas(20, 3);
+    } else {
+      // middle
+      return terrainAtlas(19, 3);
+    }
+  } else if (y == 0) {
+    if (x == 0) {
+      // top left
+      return terrainAtlas(18, 2);
+    } else if (x == levelSize.x - 1) {
+      // top right
+      return terrainAtlas(20, 2);
+    } else {
+      // top
+      return terrainAtlas(19, 2);
+    }
+  }
 }
