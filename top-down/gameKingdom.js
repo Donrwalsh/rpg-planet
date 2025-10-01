@@ -7,7 +7,7 @@ export class Kingdom extends LJS.EngineObject {
     super(LJS.vec2(0), LJS.vec2(0));
     this.color = color;
     this.exp = 0;
-    this.spawnTime = 2;
+    this.spawnTime = 10;
     this.spawnTimer = new LJS.Timer(this.spawnTime);
   }
 
@@ -28,6 +28,25 @@ export class Kingdom extends LJS.EngineObject {
         vec2(9, 7),
         vec2(11, 7),
         vec2(13, 7),
+        vec2(15, 7),
+        vec2(18, 7),
+        vec2(19, 7),
+        vec2(21, 5),
+        vec2(23, 3),
+        vec2(24, 1),
+      ],
+      [
+        vec2(1, 22),
+        vec2(3, 20),
+        vec2(4, 18),
+        vec2(5, 16),
+        vec2(5, 14),
+        vec2(5, 12),
+        vec2(6, 10),
+        vec2(7, 9),
+        vec2(9, 9),
+        vec2(11, 8),
+        vec2(13, 8),
         vec2(15, 7),
         vec2(17, 7),
         vec2(18, 7),

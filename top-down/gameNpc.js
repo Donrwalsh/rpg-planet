@@ -29,7 +29,7 @@ export class NPC extends LJS.EngineObject {
     this.stat_senses = 1 + LJS.randInt(2);
 
     this.speed = 0.02 + 0.001 * this.stat_speed;
-    this.attentionSpan = 2.5 - this.stat_smarts * 0.05;
+    this.attentionSpan = 1.5 - this.stat_smarts * 0.05;
     this.sightRange = 2 + 0.1 * this.stat_senses;
     this.sightWidth = 0.25 + 0.01 * this.stat_senses;
 
@@ -38,8 +38,7 @@ export class NPC extends LJS.EngineObject {
     this.target;
     this.facing;
 
-    // This is still wonky
-    this.reach = 2;
+    this.reach = 1;
 
     this.attackSpeed = 2;
     this.attackTimer = new Timer();
@@ -114,12 +113,14 @@ export class NPC extends LJS.EngineObject {
     if (this.walkTimer.isSet()) {
       this.renderWalk();
       if (this.walkTimer.elapsed()) {
+        this.walkTimer.unset();
         this.occupied = false;
       }
     }
 
     if (this.unoccupied()) {
       if (this.getFirstObjectSeen()?.hp > 0) {
+        console.log("potato");
         this.target = this.getFirstObjectSeen();
         this.facing = this.getFacing();
         this.occupied = true;
@@ -159,7 +160,7 @@ export class NPC extends LJS.EngineObject {
 
         this.renderWalk();
       }
-    } else if (this.target) {
+    } else if (this.target?.hp > 0) {
       if (this.pos.distance(this.target.pos) <= this.reach) {
         this.velocity.x = 0;
         this.velocity.y = 0;

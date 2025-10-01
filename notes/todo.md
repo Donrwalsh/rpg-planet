@@ -42,3 +42,4 @@
 - [ ] Complete the raycast expansion for the other directions!
 - [ ] Add a two (four) new domestic routes!
 - [ ] Just further improvements on NPC behavior, but I like the core of what's going on here.
+- [ ] Collision is still bizarre on stones

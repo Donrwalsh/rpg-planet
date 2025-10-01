@@ -27,6 +27,8 @@ async function gameInit() {
   // load the game level data
   gameLevelData = await LJS.fetchJSON("gameLevelData.json");
 
+  LJS.setTileFixBleedScale(0.3);
+
   // center the camera
   LJS.setCameraPos(vec2(gameLevelData.width * 0.5, gameLevelData.height * 0.5));
   LJS.setCameraScale(29);
