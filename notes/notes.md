@@ -156,3 +156,7 @@ Looks pretty goofy without any collision between the NPCs at 1/sec. At 5/sec it 
   - [ ] Reconsider the data structure of the 'thing' object?
 - [ ] Make 'spawn' and 'despawn' points for the NPCs. Maybe just need one spawn point object? Could designate where an npc is eligible to despawn. . .
   - Since this requires collision, I'm probably best off fussing with the additional layers before I work the spawning/despawning tie-in to NPCs. But, I'll think on it some more first.
+
+### 10/07/25
+
+Added a favicon of a treasure chest. looticons > LootIcons_png > transparent > chest_t_01. Then I used https://favicon.io/favicon-converter/ before realizing I already had the png I needed and I used the 32x32 version of it. Looks good enough for now IMO.
