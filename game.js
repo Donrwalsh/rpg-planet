@@ -120,14 +120,14 @@ LJS.engineInit(
   gameRender,
   gameRenderPost,
   [
-    "./Atlas/terrain_atlas.png",
-    "./submission_daneeklu/ui/scrollsandblocks.png",
-    "./lpc-spritesheets/MaleBody.png",
-    "./lpc-spritesheets/FemaleBody.png",
-    "./lpc-spritesheets/MaleWhiteShirt.png",
-    "./lpc-spritesheets/FemaleWhiteShirt.png",
-    "./lpc-spritesheets/MaleWhitePants.png",
-    "./lpc-spritesheets/FemaleWhitePants.png",
-    "./lpc-spritesheets/ShortWhiteHair.png",
+    "./assets/Atlas/terrain_atlas.png",
+    "./assets/submission_daneeklu/ui/scrollsandblocks.png",
+    "./assets/lpc-spritesheets/MaleBody.png",
+    "./assets/lpc-spritesheets/FemaleBody.png",
+    "./assets/lpc-spritesheets/MaleWhiteShirt.png",
+    "./assets/lpc-spritesheets/FemaleWhiteShirt.png",
+    "./assets/lpc-spritesheets/MaleWhitePants.png",
+    "./assets/lpc-spritesheets/FemaleWhitePants.png",
+    "./assets/lpc-spritesheets/ShortWhiteHair.png",
   ]
 );
