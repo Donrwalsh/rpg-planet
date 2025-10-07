@@ -7,7 +7,7 @@
 'use strict';
 
 // import LittleJS module
-import * as LJS from '../../dist/littlejs.esm.js';
+import * as LJS from 'littlejs.esm.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 function gameInit()
