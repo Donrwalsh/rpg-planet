@@ -129,5 +129,8 @@ LJS.engineInit(
     "./assets/lpc-spritesheets/MaleWhitePants.png",
     "./assets/lpc-spritesheets/FemaleWhitePants.png",
     "./assets/lpc-spritesheets/ShortWhiteHair.png",
+    "./assets/lpc-spritesheets/LongWhiteHair.png",
+    "./assets/lpc-spritesheets/PonytailWhiteHair.png",
+    "./assets/lpc-spritesheets/CurlyWhiteHair.png",
   ]
 );

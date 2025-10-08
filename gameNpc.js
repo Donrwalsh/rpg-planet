@@ -9,6 +9,17 @@ const atlas = {
   combatIdle: { tilePos: LJS.vec2(0, 2688), frames: 2 },
 };
 
+const posAdjust = LJS.vec2(0, 0.65);
+const tileSize = LJS.vec2(64, 64);
+
+const HAIR_TILE = {
+  bald: 0, // do not draw hair
+  short: 8,
+  long: 9,
+  ponytail: 10,
+  curly: 11,
+};
+
 export class NPC extends LJS.EngineObject {
   constructor(color, path, missionCompleteCallback) {
     let pos = path[0];
@@ -34,6 +45,8 @@ export class NPC extends LJS.EngineObject {
     this.sightWidth = 0.25 + 0.01 * this.stat_senses;
 
     this.color = color;
+    this.hairColor = this.getRandomHairColor();
+    this.hairStyle = this.getRandomHairStyle();
     this.occupied = false;
     this.target;
     this.facing;
@@ -51,6 +64,27 @@ export class NPC extends LJS.EngineObject {
     }[this.color];
 
     this.setCollision();
+  }
+
+  getRandomHairColor() {
+    return this.randomFrom([LJS.BLACK, LJS.YELLOW, LJS.GRAY, LJS.BROWN]);
+  }
+
+  randomFrom(array) {
+    return array[LJS.randInt(array.length)];
+  }
+
+  getRandomHairStyle() {
+    if (this.gender) {
+      // female
+      return this.randomFrom([HAIR_TILE.long, HAIR_TILE.ponytail]);
+    } else {
+      return this.randomFrom([
+        HAIR_TILE.short,
+        HAIR_TILE.curly,
+        HAIR_TILE.bald,
+      ]);
+    }
   }
 
   getFirstObjectSeen() {
@@ -202,6 +236,7 @@ export class NPC extends LJS.EngineObject {
       }
     }
 
+    this.facing = direction;
     return direction;
   }
 
@@ -235,15 +270,7 @@ export class NPC extends LJS.EngineObject {
       ),
       LJS.GRAY
     );
-    // hair:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 8).frame(
-        (this.getAliveTime() * 3) % this.getFrames("slash") | 0
-      ),
-      LJS.BLACK
-    );
+    this.drawHair("slash");
   }
 
   renderCombatIdle() {
@@ -276,15 +303,7 @@ export class NPC extends LJS.EngineObject {
       ),
       LJS.GRAY
     );
-    // hair:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 8).frame(
-        (this.getAliveTime() * 3) % this.getFrames("combatIdle") | 0
-      ),
-      LJS.BLACK
-    );
+    this.drawHair("combatIdle");
   }
 
   renderWalk() {
@@ -317,15 +336,7 @@ export class NPC extends LJS.EngineObject {
       ),
       LJS.GRAY
     );
-    // hair:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 8).frame(
-        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
-      ),
-      LJS.BLACK
-    );
+    this.drawHair("walk");
   }
 
   collideWithObject(o) {
@@ -338,5 +349,21 @@ export class NPC extends LJS.EngineObject {
 
   getFrames(action) {
     return atlas[action].frames;
+  }
+
+  drawHair(action) {
+    if (this.hairStyle == HAIR_TILE.bald) {
+      return;
+    }
+    let tilePos = this.getTilePos(action, this.facing);
+
+    LJS.drawTile(
+      this.pos.add(posAdjust),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, this.hairStyle).frame(
+        (this.getAliveTime() * 3) % this.getFrames(action) | 0
+      ),
+      this.hairColor
+    );
   }
 }
