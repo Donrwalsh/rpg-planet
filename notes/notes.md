@@ -152,11 +152,15 @@ Next idea is to establish a movement situation for the NPCs that simulates a rea
 
 Looks pretty goofy without any collision between the NPCs at 1/sec. At 5/sec it looks pretty dang realistic, especially when I start mixing in additional paths. Sweet, I should do that next. Or maybe get the despawning working.
 
-- [ ] Make a 2nd path.
-  - [ ] Reconsider the data structure of the 'thing' object?
-- [ ] Make 'spawn' and 'despawn' points for the NPCs. Maybe just need one spawn point object? Could designate where an npc is eligible to despawn. . .
+- [x] Make a 2nd path.
+  - [x] Reconsider the data structure of the 'thing' object? (_added this to kingdom class for now_)
+- [x] Make 'spawn' and 'despawn' points for the NPCs. Maybe just need one spawn point object? Could designate where an npc is eligible to despawn. . .
   - Since this requires collision, I'm probably best off fussing with the additional layers before I work the spawning/despawning tie-in to NPCs. But, I'll think on it some more first.
 
 ### 10/07/25
 
 Added a favicon of a treasure chest. looticons > LootIcons_png > transparent > chest_t_01. Then I used https://favicon.io/favicon-converter/ before realizing I already had the png I needed and I used the 32x32 version of it. Looks good enough for now IMO.
+
+### 10/08/25
+
+I've got three working paths (so six in practice) that cover the full ABC combinatrics of entrances and exits. I added another loop on the path to make it sensible for NPCs leaving from ~(24, 1) will have a way to take the center path. Letting the app run and watching the chaos of movement is really pleasing right now!
