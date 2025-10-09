@@ -164,3 +164,7 @@ Added a favicon of a treasure chest. looticons > LootIcons_png > transparent > c
 ### 10/08/25
 
 I've got three working paths (so six in practice) that cover the full ABC combinatrics of entrances and exits. I added another loop on the path to make it sensible for NPCs leaving from ~(24, 1) will have a way to take the center path. Letting the app run and watching the chaos of movement is really pleasing right now!
+
+- [ ] I don't like the magic number usage in my new drawing functions, but I'm not going to get too distracted by it right now.
+
+Feeling a bit uneasy about how I'm managing facing. There were some moments where the hair and the rest of the sprite would desync and it turned out to just be some incomplete code, but given that all these different animations are sometimes locked behind particular action profiles that can be hard to induce, perhaps I could use some sort of debug view to show all the sprite combinations that might show up in game?

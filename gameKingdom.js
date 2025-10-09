@@ -7,7 +7,7 @@ export class Kingdom extends LJS.EngineObject {
     super(LJS.vec2(0), LJS.vec2(0));
     this.color = color;
     this.exp = 0;
-    this.spawnTime = 1;
+    this.spawnTime = 5;
     this.spawnTimer = new LJS.Timer(this.spawnTime);
   }
 

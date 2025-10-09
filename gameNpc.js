@@ -145,7 +145,7 @@ export class NPC extends LJS.EngineObject {
     }
 
     if (this.walkTimer.isSet()) {
-      this.renderWalk();
+      this.renderSprite("walk");
       if (this.walkTimer.elapsed()) {
         this.walkTimer.unset();
         this.occupied = false;
@@ -192,13 +192,13 @@ export class NPC extends LJS.EngineObject {
           .rotate(LJS.rand(-0.2, 0.2))
           .multiply(vec2(this.speed));
 
-        this.renderWalk();
+        this.renderSprite("walk");
       }
     } else if (this.target?.hp > 0) {
       if (this.pos.distance(this.target.pos) <= this.reach) {
         this.velocity.x = 0;
         this.velocity.y = 0;
-        this.renderSlash();
+        this.renderSprite("slash");
         if (!this.attackTimer.isSet()) {
           this.attackTimer.set(this.attackSpeed);
         }
@@ -207,7 +207,7 @@ export class NPC extends LJS.EngineObject {
           this.attackTimer.set(this.attackSpeed);
         }
       } else {
-        this.renderCombatIdle();
+        this.renderSprite("combatIdle");
         this.velocity = this.target.pos
           .subtract(this.pos)
           .normalize(this.speed);
@@ -216,6 +216,9 @@ export class NPC extends LJS.EngineObject {
   }
 
   getFacing() {
+    // if (this.occupied) {
+    //   return this.facing;
+    // }
     //0 is Up, 1 is Left, 2 is Down, 3 is Right
     // Will cause errors if a case is missed.
     let direction;
@@ -240,123 +243,29 @@ export class NPC extends LJS.EngineObject {
     return direction;
   }
 
-  renderSlash() {
-    let tilePos = this.getTilePos("slash", this.facing);
-    let tileSize = LJS.vec2(64, 64);
+  renderSprite(action) {
+    const tilePos = atlas[action].tilePos.add(
+      LJS.vec2(0, 64 * this.getFacing())
+    );
 
-    // sprite:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 2 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("slash") | 0
-      )
-    );
-    //shirt:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 4 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("slash") | 0
-      ),
-      this.color
-    );
-    // pants:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 6 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("slash") | 0
-      ),
-      LJS.GRAY
-    );
-    this.drawHair("slash");
-  }
-
-  renderCombatIdle() {
-    let tilePos = this.getTilePos("combatIdle", this.facing);
-    let tileSize = LJS.vec2(64, 64);
-
-    // sprite:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 2 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("combatIdle") | 0
-      )
-    );
-    //shirt:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 4 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("combatIdle") | 0
-      ),
-      this.color
-    );
-    // pants:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 6 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("combatIdle") | 0
-      ),
-      LJS.GRAY
-    );
-    this.drawHair("combatIdle");
-  }
-
-  renderWalk() {
-    let tilePos = this.getTilePos("walk", this.getFacing());
-    let tileSize = LJS.vec2(64, 64);
-
-    // sprite:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 2 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
-      )
-    );
-    //shirt:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 4 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
-      ),
-      this.color
-    );
-    // pants:
-    LJS.drawTile(
-      this.pos.add(LJS.vec2(0, 0.65)),
-      LJS.vec2(2),
-      new LJS.TileInfo(tilePos, tileSize, 6 + this.gender).frame(
-        (this.getAliveTime() * 3) % this.getFrames("walk") | 0
-      ),
-      LJS.GRAY
-    );
-    this.drawHair("walk");
+    this.drawSprite(action, tilePos);
+    this.drawShirt(action, tilePos);
+    this.drawPants(action, tilePos);
+    this.drawHair(action, tilePos);
   }
 
   collideWithObject(o) {
     // console.log(o);
   }
 
-  getTilePos(action, dir) {
-    return atlas[action].tilePos.add(LJS.vec2(0, 64 * dir));
-  }
-
   getFrames(action) {
     return atlas[action].frames;
   }
 
-  drawHair(action) {
+  drawHair(action, tilePos) {
     if (this.hairStyle == HAIR_TILE.bald) {
       return;
     }
-    let tilePos = this.getTilePos(action, this.facing);
-
     LJS.drawTile(
       this.pos.add(posAdjust),
       LJS.vec2(2),
@@ -364,6 +273,38 @@ export class NPC extends LJS.EngineObject {
         (this.getAliveTime() * 3) % this.getFrames(action) | 0
       ),
       this.hairColor
+    );
+  }
+
+  drawPants(action, tilePos) {
+    LJS.drawTile(
+      this.pos.add(posAdjust),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 6 + this.gender).frame(
+        (this.getAliveTime() * 3) % this.getFrames(action) | 0
+      ),
+      LJS.GRAY
+    );
+  }
+
+  drawShirt(action, tilePos) {
+    LJS.drawTile(
+      this.pos.add(posAdjust),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 4 + this.gender).frame(
+        (this.getAliveTime() * 3) % this.getFrames(action) | 0
+      ),
+      this.color
+    );
+  }
+
+  drawSprite(action, tilePos) {
+    LJS.drawTile(
+      this.pos.add(posAdjust),
+      LJS.vec2(2),
+      new LJS.TileInfo(tilePos, tileSize, 2 + this.gender).frame(
+        (this.getAliveTime() * 3) % this.getFrames(action) | 0
+      )
     );
   }
 }
