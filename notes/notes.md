@@ -168,3 +168,9 @@ I've got three working paths (so six in practice) that cover the full ABC combin
 - [ ] I don't like the magic number usage in my new drawing functions, but I'm not going to get too distracted by it right now.
 
 Feeling a bit uneasy about how I'm managing facing. There were some moments where the hair and the rest of the sprite would desync and it turned out to just be some incomplete code, but given that all these different animations are sometimes locked behind particular action profiles that can be hard to induce, perhaps I could use some sort of debug view to show all the sprite combinations that might show up in game?
+
+### 10/10/25
+
+Working on improving the raycast logic. I can remove sightRange from the left/right raycast calc because I'm normalizing the vector length by that value anyway. It occurred to me that the simplest way to do this is to create 3 vectors and then just rotate them based on facing. Handily, the scheme I'm using for facing fits nicely into a quick calculation to produce the right amount of 90 degree turns based on the int that represents facing. I had a few issues with seemingly equivalent code producing different results, but eventually landed on something that smells pretty nice!
+
+As part of this work I also shifted the origin of these rays to be closer to the NPCs face which is hardly noticeable right now unless you're actually reviewing the raycast lines themselves, but I figure this will promote more realistic gameplay down the line.

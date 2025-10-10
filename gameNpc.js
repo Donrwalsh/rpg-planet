@@ -42,7 +42,7 @@ export class NPC extends LJS.EngineObject {
     this.speed = 0.02 + 0.001 * this.stat_speed;
     this.attentionSpan = 1.5 - this.stat_smarts * 0.05;
     this.sightRange = 2 + 0.1 * this.stat_senses;
-    this.sightWidth = 0.25 + 0.01 * this.stat_senses;
+    this.sightWidth = 0.2 + 0.01 * this.stat_senses;
 
     this.color = color;
     this.hairColor = this.getRandomHairColor();
@@ -88,48 +88,35 @@ export class NPC extends LJS.EngineObject {
   }
 
   getFirstObjectSeen() {
-    let seenObjects;
-    if (this.getFacing() == 0) {
-      // This works like a charm but is pretty unwieldy. Would love to generalize it further.
-      let baseRaycastVector = this.pos.add(LJS.vec2(0, this.sightRange));
-      let leftRaycastVector = this.pos.add(
-        LJS.vec2(
-          -1 * this.sightWidth * this.sightRange,
-          (1 - this.sightWidth) * this.sightRange
-        ).normalize(this.sightRange)
-      );
-      let rightRaycastVector = this.pos.add(
-        LJS.vec2(
-          this.sightWidth * this.sightRange,
-          (1 - this.sightWidth) * this.sightRange
-        ).normalize(this.sightRange)
-      );
+    // Produce three vectors originating from the NPCs face.
+    // Vectors are of length sightRange and fan out by sightWidth.
+    // Then vectors are rotated based on facing to simulate NPC vision.
+    const angle = (-1 * this.getFacing() * 90 * Math.PI) / 180;
+    const eyePos = this.pos.add(LJS.vec2(0, 0.75));
 
-      seenObjects = LJS.engineObjectsRaycast(this.pos, baseRaycastVector)
-        .concat(LJS.engineObjectsRaycast(this.pos, leftRaycastVector))
-        .concat(LJS.engineObjectsRaycast(this.pos, rightRaycastVector));
-    }
-    if (this.getFacing() == 1) {
-      seenObjects = LJS.engineObjectsRaycast(
-        this.pos,
-        this.pos.add(LJS.vec2(-1 * this.sightRange, 0))
-      );
-    }
-    if (this.getFacing() == 2) {
-      seenObjects = LJS.engineObjectsRaycast(
-        this.pos,
-        this.pos.add(LJS.vec2(0, -1 * this.sightRange))
-      );
-    }
-    if (this.getFacing() == 3) {
-      seenObjects = LJS.engineObjectsRaycast(
-        this.pos,
-        this.pos.add(LJS.vec2(this.sightRange, 0))
-      );
-    }
+    let mainRaycastVector = eyePos.add(
+      LJS.vec2(0, this.sightRange).rotate(angle)
+    );
+
+    let portRaycastVector = eyePos.add(
+      LJS.vec2(-1 * this.sightWidth, 1 - this.sightWidth)
+        .normalize(this.sightRange)
+        .rotate(angle)
+    );
+
+    let starboardRaycastVector = eyePos.add(
+      LJS.vec2(this.sightWidth, 1 - this.sightWidth)
+        .normalize(this.sightRange)
+        .rotate(angle)
+    );
+
+    let seenObjects = LJS.engineObjectsRaycast(eyePos, mainRaycastVector)
+      .concat(LJS.engineObjectsRaycast(eyePos, portRaycastVector))
+      .concat(LJS.engineObjectsRaycast(eyePos, starboardRaycastVector));
+
     return seenObjects
       .filter((object) => object != this)
-      .sort((a, b) => this.pos.distance(a.pos) - this.pos.distance(b.pos))[0];
+      .sort((a, b) => eyePos.distance(a.pos) - eyePos.distance(b.pos))[0];
   }
 
   unoccupied() {
@@ -137,7 +124,7 @@ export class NPC extends LJS.EngineObject {
   }
 
   render() {
-    // this.getFirstObjectSeen();
+    this.getFirstObjectSeen();
     if (this.attackTimer.isSet() && this.target.hp == 0) {
       this.occupied = false;
       this.attackTimer.unset();
