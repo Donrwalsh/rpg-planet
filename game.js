@@ -43,9 +43,16 @@ async function gameInit() {
   const gameTile = (i, size = vec2(32), textureIndexOverride = 0) =>
     LJS.tile(i, size, textureIndexOverride, 0);
 
+  const terrainAtlas = (x, y) => x + 32 * y;
+
   spriteAtlas = {
     rock: gameTile(vec2(26, 25), 32),
     scroll: gameTile(8 + 16 * 2, 32, 1), // scrollsAndBlocks calc from gameLevel
+    growthOne: gameTile(terrainAtlas(9, 24), 32),
+    growthTwo: gameTile(terrainAtlas(9, 25), 32),
+    growthThree: gameTile(terrainAtlas(9, 26), 32),
+    growthFour: gameTile(terrainAtlas(9, 27), 32),
+    growthFive: gameTile(terrainAtlas(9, 28), 32),
   };
 
   GameLevel.buildLevel();

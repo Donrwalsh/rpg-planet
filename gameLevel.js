@@ -47,6 +47,11 @@ export function buildLevel() {
     frondTop: 3,
     frondBottom: 4,
     border: 5,
+    growthOne: 6,
+    growthTwo: 7,
+    growthThree: 8,
+    growthFour: 9,
+    growthFive: 10,
   };
 
   let scrollLayer = new LJS.TileCollisionLayer(
@@ -126,6 +131,18 @@ export function buildLevel() {
           tileType = 1;
           layer = scrollLayer;
           objectTileIndex = -1;
+        }
+        if (objectTile == objectLookup.growthOne) {
+          tileType = 1;
+          layer = objectLayer;
+          objectTileIndex = terrainAtlas(9, 24);
+          new GameObjects.Growth(pos.add(vec2(0.5)), 1);
+        }
+        if (objectTile == objectLookup.growthTwo) {
+          tileType = 1;
+          layer = objectLayer;
+          objectTileIndex = terrainAtlas(9, 25);
+          new GameObjects.Growth(pos.add(vec2(0.5)), 2);
         }
         const data = new LJS.TileLayerData(objectTileIndex, 0, 0, new Color());
         layer.setCollisionData(pos, tileType);

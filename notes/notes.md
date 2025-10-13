@@ -192,3 +192,14 @@ Going to start by turning off the 'place rock' behavior. I think to start I'll s
 Looking at my gameObject code, it's a bit too closely coupled to rocks for my liking so I'm going to work off a fresh class for the scroll.
 
 Ok, so the scroll is now clickable and it increments a counter labeled Mana. My thought is to work on additional side effects from that click next.
+
+So imagine clicking the scroll and then it'll randomly cause plants to grow in a 3x3 grid surrounding the scroll's position. Well, you don't need to imagine it because it's happening! Here are some details on getting it to work:
+
+- So you've clicked the scroll. The scroll itself listens for this click in its `update()` method and we proceed from there.
+- The mana counter is incremented via a call to `increment()` sitting on the Game file. I couldn't directly adjust this value so somewhere along the way it is being marked as readonly.
+- Next I do some math to determine a random position. Since I'm restricting it to a 3x3 grid, I just generate two random integers from 0 to 2 and boom there are my X & Y coords. I combine this randomly generated position with the position of the scroll (as well as another vector to adjust the starting position to be the bottom-left of my 3x3 grid with the scroll in the middle). Now I have the randomly determined position.
+- I need to determine if there are any game objects at this position and `LJS.engineObjectsCollect()` lets me do so. I pass in my position and the size (a 1x1 normal vector because of my grid system) and it returns a list of objects that overlap with my params. (I'm a little shaky on this, is collection actually using overlapping to determine this?)
+  - As a quick aside, at this point I may get back the Scroll object or potentially another object that is in that position but isn't the specific growth object that I'm looking for. So I added a `type` value to scrolls and growth so I can quickly know the type of object I'm working with. This is a side-effect of my lack of commitment on how I'm managing gameObjects across the board.
+- So here we are. I have in my hand the randomly selected growth object that I'd like to make grow so I hit it with a quick call to its `grow()` method which increments the stage of the plant if it hasn't reached maturity and that's that.
+
+Ultimately this works exactly how I want it to so I'm going to commit what I have. The code in gameScroll is a mess and I want to clean that up and consider how I might expand this code to work with a larger area and/or perhaps multiple types of growth being supported in the same way.

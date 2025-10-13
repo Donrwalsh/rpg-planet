@@ -32,6 +32,36 @@ export class GameObject extends LJS.EngineObject {
   }
 }
 
+export class Growth extends LJS.EngineObject {
+  constructor(pos, stage) {
+    super(pos, LJS.vec2(1));
+    this.size = LJS.vec2(1);
+    this.stage = stage;
+    this.type = "growth";
+  }
+
+  lookup = [
+    0,
+    Game.spriteAtlas.growthOne,
+    Game.spriteAtlas.growthTwo,
+    Game.spriteAtlas.growthThree,
+    Game.spriteAtlas.growthFour,
+    Game.spriteAtlas.growthFive,
+  ];
+
+  render() {
+    if (this.stage > 0) {
+      LJS.drawTile(this.pos, LJS.vec2(1), this.lookup[this.stage]);
+    }
+  }
+
+  grow() {
+    if (this.stage < 5) {
+      this.stage++;
+    }
+  }
+}
+
 export class Rock extends GameObject {
   constructor(pos) {
     super(pos, LJS.vec2(1), Game.spriteAtlas.rock);
