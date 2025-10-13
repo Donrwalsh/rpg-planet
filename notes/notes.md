@@ -174,3 +174,21 @@ Feeling a bit uneasy about how I'm managing facing. There were some moments wher
 Working on improving the raycast logic. I can remove sightRange from the left/right raycast calc because I'm normalizing the vector length by that value anyway. It occurred to me that the simplest way to do this is to create 3 vectors and then just rotate them based on facing. Handily, the scheme I'm using for facing fits nicely into a quick calculation to produce the right amount of 90 degree turns based on the int that represents facing. I had a few issues with seemingly equivalent code producing different results, but eventually landed on something that smells pretty nice!
 
 As part of this work I also shifted the origin of these rays to be closer to the NPCs face which is hardly noticeable right now unless you're actually reviewing the raycast lines themselves, but I figure this will promote more realistic gameplay down the line.
+
+Ok, so one thing just became clear to me: The black boxes on the screen in debug mode are the actual object representation of the NPC itself (defined by size in the constructor). Once I moved the sight lines away from this object they turned blue. . . because they were no longer always colliding with the box (npc object) that they originate from. This makes sense! and means I can remove the filtering of self out of the getFirstObjectsSeen method but it also means that NPCs seeing each other is going to be based on that tiny square too which isn't what I want. So maybe next I can work on establishing what behavior might happen when NPCs notice each other.
+
+- [ ] Facing bug where attacking always happens facing downward because of no velocity.
+
+Ope, nevermind about removing the self filter from vision. When the NPCs are looking down the sight lines still cross their object.
+
+IDEA: click on scroll to gain resources, causes circular aura to expand which slowly degrades. NPCs see or touch it and it causes suspicion to skyrocket.
+
+### 10/13/25
+
+Ok, today I have a hankering to make some gameward progress in the sense that I'd like to approach or achieve enough functionality to hit a game over screen by the end of the week. First things first, I'd like to implement some actual 'gameplay' as it were and I like the idea of clicking on the scroll so I'm going to explore that.
+
+Going to start by turning off the 'place rock' behavior. I think to start I'll setup the scroll as just an incrementer for some counter on the screen.
+
+Looking at my gameObject code, it's a bit too closely coupled to rocks for my liking so I'm going to work off a fresh class for the scroll.
+
+Ok, so the scroll is now clickable and it increments a counter labeled Mana. My thought is to work on additional side effects from that click next.

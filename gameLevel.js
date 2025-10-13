@@ -9,6 +9,7 @@ import { Color } from "./littlejs.esm.js";
 const { vec2, hsl, tile } = LJS;
 import * as Game from "./game.js";
 import * as GameObjects from "./gameObject.js";
+import * as GameScroll from "./gameScroll.js";
 
 export function buildLevel() {
   // destroy all objects
@@ -99,6 +100,7 @@ export function buildLevel() {
       let layer;
       if (objectTile != objectLookup.empty) {
         if (objectTile == objectLookup.scroll) {
+          new GameScroll.GameScroll(pos.add(vec2(0.5)));
           tileType = 1;
           objectTileIndex = scrollsAndBlocks(8, 2);
           layer = scrollLayer;

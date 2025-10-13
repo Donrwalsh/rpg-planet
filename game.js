@@ -15,6 +15,12 @@ const { vec2, hsl, tile } = LJS;
 // globals
 export let gameLevelData, spriteAtlas;
 
+export let mana = 0;
+
+export function incrementMana() {
+  mana++;
+}
+
 // npcs
 let npcs = [];
 let redKingdom = new GameKingdom.Kingdom();
@@ -34,10 +40,12 @@ async function gameInit() {
   LJS.setCameraScale(29);
 
   // // establish sprite atlas
-  const gameTile = (i, size = vec2(32)) => LJS.tile(i, size, 0, 0);
+  const gameTile = (i, size = vec2(32), textureIndexOverride = 0) =>
+    LJS.tile(i, size, textureIndexOverride, 0);
 
   spriteAtlas = {
     rock: gameTile(vec2(26, 25), 32),
+    scroll: gameTile(8 + 16 * 2, 32, 1), // scrollsAndBlocks calc from gameLevel
   };
 
   GameLevel.buildLevel();
@@ -84,7 +92,8 @@ function gameUpdate() {
     console.log(clickedOnNpc);
   }
 
-  if (LJS.mouseWasPressed(0)) {
+  // turning this off for now
+  if (LJS.mouseWasPressed(0) && false) {
     // Places on top, which I don't like, but the flooring at least keeps it to a grid.
     new GameObject.Rock(
       vec2(Math.floor(LJS.mousePos.x), Math.floor(LJS.mousePos.y))
@@ -96,6 +105,9 @@ function gameUpdate() {
 function gameUpdatePost() {
   // called after physics and objects are updated
   // setup camera and prepare for render
+
+  // show arbitrary text on screen:
+  LJS.drawTextScreen("Mana " + mana, vec2(LJS.mainCanvasSize.x / 2, 70), 50);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
